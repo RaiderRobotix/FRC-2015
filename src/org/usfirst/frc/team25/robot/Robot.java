@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  * directory.
  */
 public class Robot extends IterativeRobot {
+	
 	OI m_OI;
+	
 	/**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -20,7 +22,28 @@ public class Robot extends IterativeRobot {
     	m_OI= OI.getInstance();
     	
     }
+    
+    /**
+     * Initialization code for disabled mode should go here.
+     */
+    public void disabledInit() {
+    	
+    }
+    
+    /**
+     * Periodic code for disabled mode should go here.
+     */
+    public void disabledPeriodic() {
+    
+    }
 
+    /**
+     * Initialization code for autonomous mode should go here.
+     */
+    public void autonomousInit() {
+    	
+    }
+    
     /**
      * This function is called periodically during autonomous
      */
@@ -29,10 +52,25 @@ public class Robot extends IterativeRobot {
     }
 
     /**
+     * Initialization code for teleop mode should go here.
+     */
+    public void teleopInit() {
+    	
+    }
+    
+    /**
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
        m_OI.enableTeleopControls();
+       
+    }
+    
+    /**
+     * Initialization code for test mode should go here.
+     */
+    public void testInit() {
+    	
     }
     
     /**
