@@ -6,8 +6,8 @@ public class Elevator {
 
 	private static Elevator m_instance;
 	
-	private static Talon m_elevatorLeft;
-	private static Talon m_elevatorRight;
+	private final Talon m_elevatorLeft;
+	private final Talon m_elevatorRight;
 	
 	public Elevator() {
 		m_elevatorLeft = new Talon(Constants.LEFT_ELEVATOR_PWM);
