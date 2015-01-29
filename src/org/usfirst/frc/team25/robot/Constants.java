@@ -9,6 +9,10 @@ public class Constants {
     // Right Drive PWM Constants
     final static int RIGHT_DRIVE_PWM1 = 0;
     final static int RIGHT_DRIVE_PWM2 = 1;
+    
+    //Elevator PWM Contstants
+    final static int LEFT_ELEVATOR_PWM=4;
+    final static int RIGHT_ELEVATOR_PWM=5;
   
     // Joystick Ports
     final static int LEFT_JOYSTICK_PORT = 0;
@@ -26,3 +30,9 @@ public class Constants {
     final static double COUNTS_PER_REVOLUTION  = 85.5;  // encoder ticks per revolution - gear reduction
     final static double INCHES_PER_COUNT = TIRE_CIRCUMFERENCE / COUNTS_PER_REVOLUTION;
 }
+/*TODO:
+-Two Half CIMS {Lift, Button Up and Down}
+-
+
+
+- */

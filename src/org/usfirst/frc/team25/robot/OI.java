@@ -7,14 +7,18 @@ public class OI {
 
 	private final Joystick m_leftStick;
 	private final Joystick m_rightStick;
+	private final Joystick m_operatorStick;
 
 	private final DriveBase m_drivebase;
+	private final Elevator m_elevator;
 
 	public OI() {
 		m_leftStick = new Joystick(Constants.LEFT_JOYSTICK_PORT);
 		m_rightStick = new Joystick(Constants.RIGHT_JOYSTICK_PORT);
-
+		m_operatorStick = new Joystick(Constants.OPERATOR_JOYSTICK_PORT);
+		
 		m_drivebase = DriveBase.getInstance();
+		m_elevator = Elevator.getInstance();
 	}
 
 	public static OI getInstance() {
@@ -43,10 +47,21 @@ public class OI {
 			return yval;
 		}
 	}
+	
+	public double getOperatorY() {
+		double yval = m_operatorStick.getY();
+		if (yval > -Constants.JOYSTICK_DEADBAND
+				&& yval < Constants.JOYSTICK_DEADBAND) {
+			return 0.0;
+		} else {
+			return yval;
+		}
+	}
 
 	public void enableTeleopControls() {
 
 		m_drivebase.setSpeed(getLeftY(), getRightY());
+		m_elevator.setSpeed(getOperatorY());
 		
 		if (m_leftStick.getTrigger())
 		{
