@@ -7,7 +7,7 @@ public class OI {
 
 	private final Joystick m_leftStick;
 	private final Joystick m_rightStick;
-	private final Joystick m_operatorStick;
+	//private final Joystick m_operatorStick; TODO add operator controls
 
 	private final DriveBase m_drivebase;
 	private final Elevator m_elevator;
@@ -15,8 +15,8 @@ public class OI {
 	public OI() {
 		m_leftStick = new Joystick(Constants.LEFT_JOYSTICK_PORT);
 		m_rightStick = new Joystick(Constants.RIGHT_JOYSTICK_PORT);
-		m_operatorStick = new Joystick(Constants.OPERATOR_JOYSTICK_PORT);
-		
+		//m_operatorStick = new Joystick(Constants.OPERATOR_JOYSTICK_PORT);
+
 		m_drivebase = DriveBase.getInstance();
 		m_elevator = Elevator.getInstance();
 	}
@@ -47,7 +47,9 @@ public class OI {
 			return yval;
 		}
 	}
-	
+
+	/*
+	 * UNUSED!
 	public double getOperatorY() {
 		double yval = m_operatorStick.getY();
 		if (yval > -Constants.JOYSTICK_DEADBAND
@@ -57,19 +59,34 @@ public class OI {
 			return yval;
 		}
 	}
+	*/
 
 	public void enableTeleopControls() {
 
 		m_drivebase.setSpeed(getLeftY(), getRightY());
-		m_elevator.setSpeed(getOperatorY());
-		
-		if (m_leftStick.getTrigger())
-		{
+		if(getLeftTrigger() && getRightTrigger()) {
+			m_elevator.setSpeed(0.0);
+		}
+		else if(getLeftTrigger()) {
+			m_elevator.setSpeed(-1.0);
+		}
+		else if(getRightTrigger()) {
+			m_elevator.setSpeed(1.0);
+		}
+		else {
+			m_elevator.setSpeed(0.0);
+		}
+
+		if (m_leftStick.getTrigger()) {
 			m_drivebase.resetEncoders();
 		}
-		
-		System.out.println("LEFT ENC:"+m_drivebase.getLeftEncoderDistance());
-		System.out.println("RIGHT ENC:"+m_drivebase.getRightEncoderDistance());
 	}
-
+	
+	public boolean getRightTrigger() {
+		return m_leftStick.getTrigger();
+	}
+	
+	public boolean getLeftTrigger() {
+		return m_leftStick.getTrigger();
+	}
 }
