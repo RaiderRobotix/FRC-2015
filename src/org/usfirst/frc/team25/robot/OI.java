@@ -13,10 +13,9 @@ public class OI {
 	// private final Arm m_arm;
 	private final DriveBase m_drivebase;
 	private final Elevator m_elevator;
-	
+
 	private boolean m_canGoTo = true;
-	private double m_potValue = Constants.ELEVATOR_BOTTOM_VALUE;
-	
+
 	public OI() {
 		m_leftStick = new Joystick(Constants.LEFT_JOYSTICK_PORT);
 		m_rightStick = new Joystick(Constants.RIGHT_JOYSTICK_PORT);
@@ -64,78 +63,88 @@ public class OI {
 	public void enableDriveControls() {
 		m_drivebase.setSpeed(getLeftY(), getRightY());
 	}
-	
+
 	public void enableTeleopControls() {
-		
+
 		enableDriveControls();
-		
+
 		if (m_operatorStick.getTrigger()) {
 			m_drivebase.resetEncoders();
 		}
-		
-		System.out.println("String Pot Value: " + m_elevator.getPotValue() + "\n");
-		
+
+		//System.out.println("String Pot Value: " + m_elevator.getPotValue()
+		//		+ "\n");
+
 		m_canGoTo = true;
-		
-		if(getRightButton(2) || getRightButton(3) || getRightButton(5)) {
+
+		if (getRightButton(2) && getRightButton(3)) {
 			m_canGoTo = false;
-		} else if(getLeftTrigger() && getLeftButton(2)) {
+		} else if (getRightButton(2) && getRightButton(5)) {
+			m_canGoTo = false;
+		} else if (getRightButton(3) && getRightButton(5)) {
+			m_canGoTo = false;
+		} else if (getLeftTrigger() && getLeftButton(2)) {
 			m_canGoTo = false;
 		}
-		
-		//"goto" methods
-		if(m_canGoTo) {
-			if(getLeftTrigger()) {
+
+		// "goto" methods
+		if (m_canGoTo) {
+			if (getLeftTrigger()) {
 				gotoPotValue(Constants.ELEVATOR_LOWER_LIMIT);
+				m_elevator.setSpeed(0.0);
 				return;
-			} else if(getRightButton(2)) {
+			} else if (getLeftButton(2)) {
 				gotoPotValue(Constants.ELEVATOR_UPPER_LIMIT);
+				m_elevator.setSpeed(0.0);
 				return;
 			}
 		}
-		
-		//manually raise and lower
-		if(getRightButton(3)) {
-			m_potValue += Constants.ELEVATOR_INCREMENT;
+
+		// manually raise and lower
+		if (getRightButton(3) && !getRightButton(2)
+				&& m_elevator.getPotValue() >= Constants.ELEVATOR_UPPER_LIMIT) {
+			m_elevator.setSpeed(Constants.ELEVATOR_UP);
+		} else if (getRightButton(2) && !getRightButton(3)
+				&& m_elevator.getPotValue() <= Constants.ELEVATOR_LOWER_LIMIT) {
+			m_elevator.setSpeed(Constants.ELEVATOR_DOWN);
+		} else {
+			m_elevator.setSpeed(0.0);
 		}
-		if(getRightButton(2)) {
-			m_potValue -= Constants.ELEVATOR_INCREMENT;
-		}
-		
-		//limits
-		if(m_potValue < Constants.ELEVATOR_LOWER_LIMIT) {
-			m_potValue = Constants.ELEVATOR_LOWER_LIMIT;
-		}
-		if(m_potValue > Constants.ELEVATOR_UPPER_LIMIT) {
-			m_potValue = Constants.ELEVATOR_UPPER_LIMIT;
-		}
-		
-		m_elevator.setSpeedByPotValue(m_potValue); 
-		
+
 	}
 
 	public void gotoPotValue(double value) {
-		while(!m_elevator.potValueWithinRange(value)) {
-			if(getRightButton(5)) {
+		while (!m_elevator.potValueWithinRange(value)) {
+			System.out.println(m_elevator.potValueWithinRange(value));
+			if (getRightButton(5)) {
 				return;
 			}
 			enableDriveControls();
-			m_elevator.setSpeedByPotValue(value);
+			if(m_elevator.potValueWithinRange(value))
+				return;
+			if(m_elevator.getPotValue() < value) {
+				m_elevator.setSpeed(Constants.ELEVATOR_DOWN);
+			} else if(m_elevator.getPotValue() > value) {
+				m_elevator.setSpeed(Constants.ELEVATOR_UP);
+			} else {
+				return;
+			}
 		}
+
 	}
-	
+
 	public boolean getOperatorButton(int b) {
 		return m_operatorStick.getRawButton(b);
 	}
-	
+
 	public boolean getRightButton(int b) {
 		return m_rightStick.getRawButton(b);
 	}
-	
+
 	public boolean getLeftButton(int b) {
 		return m_leftStick.getRawButton(b);
 	}
-	
+
 	public boolean getRightTrigger() {
 		return m_rightStick.getTrigger();
 	}

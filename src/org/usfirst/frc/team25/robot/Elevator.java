@@ -42,12 +42,11 @@ public class Elevator {
 	}
 
 	public boolean potValueWithinRange(double desiredValue) {
-		double m_allowedDeviation = Constants.ALLOWED_ELEVATOR_VALUE_RANGE / 2.0;
-		double m_potLowerLimit = desiredValue - m_allowedDeviation;
-		double m_potUpperLimit = desiredValue + m_allowedDeviation;
+		double m_potLowerLimit = desiredValue + Constants.ALLOWED_DEVIATION;
+		double m_potUpperLimit = desiredValue - Constants.ALLOWED_DEVIATION;
 
-		if (getPotValue() >= m_potLowerLimit
-				&& getPotValue() <= m_potUpperLimit) {
+		if (getPotValue() <= m_potLowerLimit
+				&& getPotValue() >= m_potUpperLimit) {
 			return true;
 		}
 

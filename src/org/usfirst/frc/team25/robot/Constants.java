@@ -21,13 +21,15 @@ public class Constants {
 		final static int ARM_Y_AXIS_PWM = -1;
 		
 		// Elevator Pot Constants
-		final static double ELEVATOR_UPPER_LIMIT = 0.333;  //TODO: change these when finished building
-		final static double ELEVATOR_LOWER_LIMIT = 0.9565;
-		final static double ELEVATOR_STARTING_VALUE = 0.9565;
-		final static double ELEVATOR_INCREMENT = 0.05;
-		final static double ELEVATOR_BOTTOM_VALUE = 0.9565;
+		final static double ELEVATOR_UPPER_LIMIT = 0.345;  //TODO: change these when finished building
+		final static double ELEVATOR_LOWER_LIMIT = 0.953;
 		final static double ELEVATOR_HOVER_VALUE = 0.855;
-		final static double ALLOWED_ELEVATOR_VALUE_RANGE = 0.02;
+		final static double ALLOWED_DEVIATION = 0.007;
+		
+		//elevator constant speeds
+		final static private double ELEVATOR_SPEED = 1.0;
+		final static double ELEVATOR_UP = -ELEVATOR_SPEED;
+		final static double ELEVATOR_DOWN = ELEVATOR_SPEED;
 		
 		// Joystick Ports
 		final static int LEFT_JOYSTICK_PORT = 0;
