@@ -27,7 +27,7 @@ public class Elevator {
 	}
 
 	public void setSpeedByPotValue(double desiredValue) {
-		if (potValueWithinRange(getPotValue())) {
+		if (potValueWithinRange(desiredValue)) {
 			setSpeed(0.0);
 		} else if (desiredValue <= Constants.ELEVATOR_LOWER_LIMIT
 				|| desiredValue >= Constants.ELEVATOR_UPPER_LIMIT) {

@@ -69,60 +69,71 @@ public class OI {
 		
 		enableDriveControls();
 		
-		m_canGoTo = true;
-		
 		if (m_operatorStick.getTrigger()) {
 			m_drivebase.resetEncoders();
 		}
 		
 		System.out.println("String Pot Value: " + m_elevator.getPotValue() + "\n");
 		
-		if(getLeftTrigger() && (m_rightStick.getRawButton(5) || m_leftStick.getRawButton(2) || m_rightStick.getRawButton(3) || m_rightStick.getRawButton(2))) {
+		m_canGoTo = true;
+		
+		if(getRightButton(2) || getRightButton(3) || getRightButton(5)) {
 			m_canGoTo = false;
-		} else if(m_leftStick.getRawButton(2) && (m_rightStick.getRawButton(5) || getLeftTrigger() || getRightTrigger() || m_rightStick.getRawButton(2))) {
+		} else if(getLeftTrigger() && getLeftButton(2)) {
 			m_canGoTo = false;
 		}
-		m_canGoTo = false;
+		
+		//"goto" methods
 		if(m_canGoTo) {
 			if(getLeftTrigger()) {
-				gotoPotValue(Constants.ELEVATOR_BOTTOM_VALUE);
+				gotoPotValue(Constants.ELEVATOR_LOWER_LIMIT);
 				return;
-			} else if(m_rightStick.getRawButton(2)) {
+			} else if(getRightButton(2)) {
 				gotoPotValue(Constants.ELEVATOR_UPPER_LIMIT);
 				return;
 			}
 		}
-		if(getLeftTrigger()) {
-			m_potValue -= Constants.ELEVATOR_INCREMENT;
-		}
-		if(m_leftStick.getRawButton(2)) {
+		
+		//manually raise and lower
+		if(getRightButton(3)) {
 			m_potValue += Constants.ELEVATOR_INCREMENT;
 		}
-		m_elevator.setSpeedByPotValue(m_potValue); 
-		/*
-		double elevatorSpeed = 0.0;
-		if(getLeftTrigger()) {
-			elevatorSpeed += -1.0;
-		}
-		if(getRightTrigger()) {
-			elevatorSpeed += 1.0;
-		}
-		if(m_leftStick.getRawButton(2)) {
-			elevatorSpeed /= 4.0;
+		if(getRightButton(2)) {
+			m_potValue -= Constants.ELEVATOR_INCREMENT;
 		}
 		
-		m_elevator.setSpeed(elevatorSpeed); 
-		*/
+		//limits
+		if(m_potValue < Constants.ELEVATOR_LOWER_LIMIT) {
+			m_potValue = Constants.ELEVATOR_LOWER_LIMIT;
+		}
+		if(m_potValue > Constants.ELEVATOR_UPPER_LIMIT) {
+			m_potValue = Constants.ELEVATOR_UPPER_LIMIT;
+		}
+		
+		m_elevator.setSpeedByPotValue(m_potValue); 
+		
 	}
 
 	public void gotoPotValue(double value) {
 		while(!m_elevator.potValueWithinRange(value)) {
-			if(m_rightStick.getRawButton(5)) {
+			if(getRightButton(5)) {
 				return;
 			}
 			enableDriveControls();
 			m_elevator.setSpeedByPotValue(value);
 		}
+	}
+	
+	public boolean getOperatorButton(int b) {
+		return m_operatorStick.getRawButton(b);
+	}
+	
+	public boolean getRightButton(int b) {
+		return m_rightStick.getRawButton(b);
+	}
+	
+	public boolean getLeftButton(int b) {
+		return m_leftStick.getRawButton(b);
 	}
 	
 	public boolean getRightTrigger() {
