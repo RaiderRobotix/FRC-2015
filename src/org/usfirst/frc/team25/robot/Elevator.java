@@ -41,13 +41,7 @@ public class Elevator {
 		}
 	}
 
-	public void gotoPotValue(double value) {
-		while(!(getPotValue() == value)) {
-			setSpeedByPotValue(value);
-		}
-	}
-
-	private boolean potValueWithinRange(double desiredValue) {
+	public boolean potValueWithinRange(double desiredValue) {
 		double m_allowedDeviation = Constants.ALLOWED_ELEVATOR_VALUE_RANGE / 2.0;
 		double m_potLowerLimit = desiredValue - m_allowedDeviation;
 		double m_potUpperLimit = desiredValue + m_allowedDeviation;
@@ -67,6 +61,6 @@ public class Elevator {
 
 	public double getPotValue() {
 		return m_stringPot.get();
-	}
+	} 
 
 }

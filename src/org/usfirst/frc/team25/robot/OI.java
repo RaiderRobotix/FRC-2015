@@ -61,9 +61,13 @@ public class OI {
 	 * Constants.JOYSTICK_DEADBAND) { return 0.0; } else { return yval; } }
 	 */
 
-	public void enableTeleopControls() {
-
+	public void enableDriveControls() {
 		m_drivebase.setSpeed(getLeftY(), getRightY());
+	}
+	
+	public void enableTeleopControls() {
+		
+		enableDriveControls();
 		
 		m_canGoTo = true;
 		
@@ -73,17 +77,18 @@ public class OI {
 		
 		System.out.println("String Pot Value: " + m_elevator.getPotValue() + "\n");
 		
-		if(getRightTrigger() && (m_rightStick.getRawButton(2) || getLeftTrigger() || m_leftStick.getRawButton(2))) {
+		if(getLeftTrigger() && (m_rightStick.getRawButton(5) || m_leftStick.getRawButton(2) || m_rightStick.getRawButton(3) || m_rightStick.getRawButton(2))) {
 			m_canGoTo = false;
-		} else if(getLeftTrigger() && (m_leftStick.getRawButton(2) || getRightTrigger() || m_rightStick.getRawButton(2))) {
+		} else if(m_leftStick.getRawButton(2) && (m_rightStick.getRawButton(5) || getLeftTrigger() || getRightTrigger() || m_rightStick.getRawButton(2))) {
 			m_canGoTo = false;
 		}
+		m_canGoTo = false;
 		if(m_canGoTo) {
-			if(getRightTrigger()) {
-				m_elevator.gotoPotValue(Constants.ELEVATOR_BOTTOM_VALUE);
+			if(getLeftTrigger()) {
+				gotoPotValue(Constants.ELEVATOR_BOTTOM_VALUE);
 				return;
 			} else if(m_rightStick.getRawButton(2)) {
-				m_elevator.gotoPotValue(Constants.ELEVATOR_HOVER_VALUE);
+				gotoPotValue(Constants.ELEVATOR_UPPER_LIMIT);
 				return;
 			}
 		}
@@ -93,9 +98,33 @@ public class OI {
 		if(m_leftStick.getRawButton(2)) {
 			m_potValue += Constants.ELEVATOR_INCREMENT;
 		}
-		m_elevator.setSpeedByPotValue(m_potValue);
+		m_elevator.setSpeedByPotValue(m_potValue); 
+		/*
+		double elevatorSpeed = 0.0;
+		if(getLeftTrigger()) {
+			elevatorSpeed += -1.0;
+		}
+		if(getRightTrigger()) {
+			elevatorSpeed += 1.0;
+		}
+		if(m_leftStick.getRawButton(2)) {
+			elevatorSpeed /= 4.0;
+		}
+		
+		m_elevator.setSpeed(elevatorSpeed); 
+		*/
 	}
 
+	public void gotoPotValue(double value) {
+		while(!m_elevator.potValueWithinRange(value)) {
+			if(m_rightStick.getRawButton(5)) {
+				return;
+			}
+			enableDriveControls();
+			m_elevator.setSpeedByPotValue(value);
+		}
+	}
+	
 	public boolean getRightTrigger() {
 		return m_rightStick.getTrigger();
 	}

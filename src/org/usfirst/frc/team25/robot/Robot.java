@@ -14,8 +14,8 @@ public class Robot extends IterativeRobot {
 	
 	OI m_OI;
 	
-	TempArmOI m_tArmOI;
-	private static final boolean m_usingTempArmSetup = true;
+	//TempArmOI m_tArmOI;
+	//private static final boolean m_usingTempArmSetup = false;
 	
 	/**
      * This function is run when the robot is first started up and should be
@@ -23,7 +23,7 @@ public class Robot extends IterativeRobot {
      */
     public void robotInit() {
     	m_OI= OI.getInstance();
-    	m_tArmOI = TempArmOI.getInstance();
+    	//m_tArmOI = TempArmOI.getInstance();
     }
     
     /**
@@ -65,11 +65,11 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-    	if(!m_usingTempArmSetup) {
+    	//if(!m_usingTempArmSetup) {
     		m_OI.enableTeleopControls(); 
-    	} else {
-    		m_tArmOI.enableTeleopControls();
-    	}
+    	//} else {
+    	//	m_tArmOI.enableTeleopControls();
+    	//}
     }
     
     /**
