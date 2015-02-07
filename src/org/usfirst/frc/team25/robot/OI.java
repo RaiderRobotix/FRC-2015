@@ -72,18 +72,16 @@ public class OI {
 			m_drivebase.resetEncoders();
 		}
 
-		//System.out.println("String Pot Value: " + m_elevator.getPotValue()
-		//		+ "\n");
+		System.out.println("String Pot Value: " + m_elevator.getPotValue()
+				+ "\n");
 
 		m_canGoTo = true;
 
-		if (getRightButton(2) && getRightButton(3)) {
+		if(getRightButton(5)) {
 			m_canGoTo = false;
-		} else if (getRightButton(2) && getRightButton(5)) {
+		} else if(getRightButton(2) || getRightButton(3)) {
 			m_canGoTo = false;
-		} else if (getRightButton(3) && getRightButton(5)) {
-			m_canGoTo = false;
-		} else if (getLeftTrigger() && getLeftButton(2)) {
+		} else if(getLeftButton(2) && getLeftTrigger()) {
 			m_canGoTo = false;
 		}
 
