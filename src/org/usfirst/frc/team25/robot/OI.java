@@ -81,18 +81,26 @@ public class OI {
 			m_canGoTo = false;
 		} else if(getRightButton(2) || getRightButton(3)) {
 			m_canGoTo = false;
-		} else if(getLeftButton(2) && getLeftTrigger()) {
+		} else if(getLeftButton(2) && getLeftButton(3)) {
+			m_canGoTo = false;
+		} else if(getLeftButton(3) && getLeftButton(4)) {
+			m_canGoTo = false;
+		} else if(getLeftButton(2) && getLeftButton(4)) {
 			m_canGoTo = false;
 		}
 
 		// "goto" methods
 		if (m_canGoTo) {
-			if (getLeftTrigger()) {
+			if (getLeftButton(2)) {
 				gotoPotValue(Constants.ELEVATOR_LOWER_LIMIT);
 				m_elevator.setSpeed(0.0);
 				return;
-			} else if (getLeftButton(2)) {
+			} else if (getLeftButton(3)) {
 				gotoPotValue(Constants.ELEVATOR_UPPER_LIMIT);
+				m_elevator.setSpeed(0.0);
+				return;
+			} else if(getLeftButton(4)) {
+				gotoPotValue(Constants.TOTE_CATCHING_POSITION);
 				m_elevator.setSpeed(0.0);
 				return;
 			}
@@ -112,6 +120,12 @@ public class OI {
 	}
 
 	public void gotoPotValue(double value) {
+		boolean m_goingUp = m_elevator.getPotValue() >= value;
+		boolean m_goingDown = !m_goingUp;
+		double m_elevatorUp = Constants.ELEVATOR_UP;
+		double m_elevatorDown = Constants.ELEVATOR_DOWN;
+		boolean m_isHalved = false;
+		
 		while (!m_elevator.potValueWithinRange(value)) {
 			System.out.println(m_elevator.potValueWithinRange(value));
 			if (getRightButton(5)) {
@@ -120,10 +134,23 @@ public class OI {
 			enableDriveControls();
 			if(m_elevator.potValueWithinRange(value))
 				return;
+			
+			if(m_goingDown && m_elevator.getPotValue() >= Constants.ELEVATOR_LOWER_LIMIT) {
+				return;
+			} else if(m_goingUp && m_elevator.getPotValue() <= Constants.ELEVATOR_UPPER_LIMIT) {
+				return;
+			}
+			
+			if(!m_isHalved && m_elevator.potValueWithinSmallRange(value)) {
+				m_elevatorUp /= 2.0;
+				m_elevatorDown /= 2.0;
+				m_isHalved = true;
+			}
+			
 			if(m_elevator.getPotValue() < value) {
-				m_elevator.setSpeed(Constants.ELEVATOR_DOWN);
+				m_elevator.setSpeed(m_elevatorDown);
 			} else if(m_elevator.getPotValue() > value) {
-				m_elevator.setSpeed(Constants.ELEVATOR_UP);
+				m_elevator.setSpeed(m_elevatorUp);
 			} else {
 				return;
 			}

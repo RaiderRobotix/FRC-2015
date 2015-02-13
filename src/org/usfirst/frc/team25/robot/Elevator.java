@@ -53,6 +53,18 @@ public class Elevator {
 		return false;
 	}
 
+	public boolean potValueWithinSmallRange(double desiredValue) {
+		double m_potLowerLimit = desiredValue + 0.075;
+		double m_potUpperLimit = desiredValue - 0.075;
+
+		if (getPotValue() <= m_potLowerLimit
+				&& getPotValue() >= m_potUpperLimit) {
+			return true;
+		}
+
+		return false;
+	} 
+	
 	public void setSpeed(double speed) {
 		m_elevatorLeft.set(speed);
 		m_elevatorRight.set(speed);
@@ -60,6 +72,6 @@ public class Elevator {
 
 	public double getPotValue() {
 		return m_stringPot.get();
-	} 
+	}
 
 }
