@@ -22,7 +22,7 @@ public class Constants {
 		
 		// Elevator Pot Constants
 		final static double ELEVATOR_UPPER_LIMIT = 0.345;
-		final static double ELEVATOR_LOWER_LIMIT = 0.9519;
+		final static double ELEVATOR_LOWER_LIMIT = 0.9519;  //.953- original
 		final static double ELEVATOR_HOVER_VALUE = 0.855;
 		final static double TOTE_CATCHING_POSITION = 0.8163;
 		final static double ALLOWED_DEVIATION = 0.0005;

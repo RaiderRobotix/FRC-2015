@@ -53,9 +53,9 @@ public class Elevator {
 		return false;
 	}
 
-	public boolean potValueWithinSmallRange(double desiredValue) {
-		double m_potLowerLimit = desiredValue + 0.075;
-		double m_potUpperLimit = desiredValue - 0.075;
+	public boolean potValueWithinCustomRange(double desiredValue, double allowedDeviation) {
+		double m_potLowerLimit = desiredValue + allowedDeviation;
+		double m_potUpperLimit = desiredValue - allowedDeviation;
 
 		if (getPotValue() <= m_potLowerLimit
 				&& getPotValue() >= m_potUpperLimit) {

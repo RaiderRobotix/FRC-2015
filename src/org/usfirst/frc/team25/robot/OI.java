@@ -15,7 +15,8 @@ public class OI {
 	private final Elevator m_elevator;
 
 	private boolean m_canGoTo = true;
-
+	private double m_elevatorSpeed = 0.0;
+	
 	public OI() {
 		m_leftStick = new Joystick(Constants.LEFT_JOYSTICK_PORT);
 		m_rightStick = new Joystick(Constants.RIGHT_JOYSTICK_PORT);
@@ -106,16 +107,28 @@ public class OI {
 			}
 		}
 
+		
+		
 		// manually raise and lower
 		if (getRightButton(3) && !getRightButton(2)
 				&& m_elevator.getPotValue() >= Constants.ELEVATOR_UPPER_LIMIT) {
-			m_elevator.setSpeed(Constants.ELEVATOR_UP);
+			m_elevatorSpeed = Constants.ELEVATOR_UP;
 		} else if (getRightButton(2) && !getRightButton(3)
 				&& m_elevator.getPotValue() <= Constants.ELEVATOR_LOWER_LIMIT) {
-			m_elevator.setSpeed(Constants.ELEVATOR_DOWN);
+			m_elevatorSpeed = Constants.ELEVATOR_DOWN;
 		} else {
 			m_elevator.setSpeed(0.0);
+			return;
+			
 		}
+		
+		if(m_elevator.potValueWithinCustomRange(Constants.ELEVATOR_LOWER_LIMIT, 0.05) && getRightButton(2)) {
+			m_elevatorSpeed /= 2.0;
+		} else if(m_elevator.potValueWithinCustomRange(Constants.ELEVATOR_UPPER_LIMIT, 0.05) && getRightButton(3)) {
+			m_elevatorSpeed /= 2.0;
+		}
+		
+		m_elevator.setSpeed(m_elevatorSpeed);
 
 	}
 
@@ -141,7 +154,7 @@ public class OI {
 				return;
 			}
 			
-			if(!m_isHalved && m_elevator.potValueWithinSmallRange(value)) {
+			if(!m_isHalved && m_elevator.potValueWithinCustomRange(value, 0.075)) {
 				m_elevatorUp /= 2.0;
 				m_elevatorDown /= 2.0;
 				m_isHalved = true;
