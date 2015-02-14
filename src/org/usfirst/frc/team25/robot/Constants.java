@@ -2,7 +2,7 @@ package org.usfirst.frc.team25.robot;
 
 public class Constants {
 
-	// Left Drive PWM Constants
+		// Left Drive PWM Constants
 		final static int LEFT_DRIVE_PWM1 = 2;
 		final static int LEFT_DRIVE_PWM2 = 3;
 
@@ -16,9 +16,9 @@ public class Constants {
 		final static int STRING_POT_PWM = 0;
 
 		// Arm PWM Constants
-		final static int ARM_CLAW_PWM = -1;  // TODO fix these
-		final static int ARM_ROTATION_PWM = -1;
-		final static int ARM_Y_AXIS_PWM = -1;
+		final static int ARM_ROTATION_PWM = 6;
+		final static int ARM_Y_AXIS_PWM = 7;
+		final static int ARM_CLAW_PWM = 8;  // TODO fix these
 		
 		// Elevator Pot Constants
 		final static double ELEVATOR_UPPER_LIMIT = 0.345;
@@ -51,5 +51,4 @@ public class Constants {
 															// reduction
 		final static double INCHES_PER_COUNT = TIRE_CIRCUMFERENCE
 				/ COUNTS_PER_REVOLUTION;
-	
 }

@@ -1,6 +1,8 @@
 package org.usfirst.frc.team25.robot;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Talon;
 
 public class DriveBase {
@@ -12,6 +14,8 @@ public class DriveBase {
 
 	private final Talon m_rightDrive1;
 	private final Talon m_rightDrive2;
+	
+	private final PowerDistributionPanel m_pdp;
 
 	private final Encoder m_leftEncoder;
 	private final Encoder m_rightEncoder;
@@ -22,12 +26,15 @@ public class DriveBase {
 
 		m_rightDrive1 = new Talon(Constants.RIGHT_DRIVE_PWM1);
 		m_rightDrive2 = new Talon(Constants.RIGHT_DRIVE_PWM2);
+		
+		m_pdp = new PowerDistributionPanel();
 
 		m_leftEncoder = new Encoder(Constants.LEFT_ENCODER_A,
 				Constants.LEFT_ENCODER_B);
 		m_rightEncoder = new Encoder(Constants.RIGHT_ENCODER_A,
 				Constants.RIGHT_ENCODER_B, true);
 		
+
 		m_leftEncoder.setDistancePerPulse(Constants.INCHES_PER_COUNT);
 		m_rightEncoder.setDistancePerPulse(Constants.INCHES_PER_COUNT);
 
@@ -72,5 +79,12 @@ public class DriveBase {
 		m_leftEncoder.reset();
 		m_rightEncoder.reset();
 	}
-
+    
+	public double getLeftCurrent() {
+		return m_pdp.getCurrent(14);
+	}
+	
+	public double getRightCurrent() {
+		return m_pdp.getCurrent(1);
+	}
 }

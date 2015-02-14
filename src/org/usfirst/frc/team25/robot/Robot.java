@@ -12,18 +12,16 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  */
 public class Robot extends IterativeRobot {
 	
+	AutonController m_autonController;
 	OI m_OI;
-	
-	//TempArmOI m_tArmOI;
-	//private static final boolean m_usingTempArmSetup = false;
 	
 	/**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
     public void robotInit() {
+    	m_autonController = AutonController.getInstance();
     	m_OI= OI.getInstance();
-    	//m_tArmOI = TempArmOI.getInstance();
     }
     
     /**
@@ -51,7 +49,7 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
-
+    	m_autonController.grabBinsFromStep();
     }
 
     /**
