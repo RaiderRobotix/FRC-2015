@@ -14,8 +14,6 @@ public class DriveBase {
 
 	private final Talon m_rightDrive1;
 	private final Talon m_rightDrive2;
-	
-	private final PowerDistributionPanel m_pdp;
 
 	private final Encoder m_leftEncoder;
 	private final Encoder m_rightEncoder;
@@ -26,8 +24,6 @@ public class DriveBase {
 
 		m_rightDrive1 = new Talon(Constants.RIGHT_DRIVE_PWM1);
 		m_rightDrive2 = new Talon(Constants.RIGHT_DRIVE_PWM2);
-		
-		m_pdp = new PowerDistributionPanel();
 
 		m_leftEncoder = new Encoder(Constants.LEFT_ENCODER_A,
 				Constants.LEFT_ENCODER_B);
@@ -78,13 +74,5 @@ public class DriveBase {
 	public void resetEncoders() {
 		m_leftEncoder.reset();
 		m_rightEncoder.reset();
-	}
-    
-	public double getLeftCurrent() {
-		return m_pdp.getCurrent(14);
-	}
-	
-	public double getRightCurrent() {
-		return m_pdp.getCurrent(1);
 	}
 }

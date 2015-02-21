@@ -2,6 +2,21 @@ package org.usfirst.frc.team25.robot;
 
 public class Constants {
 
+		//Arm Rotation limits
+		public final static double LOWER_COUNTER_LIMIT = 1.056;
+		public final static double ARM_FORWARD = 1.356;
+		public final static double TOP_VALUE = 3.0;
+		public final static double UPPER_COUNTER_LIMIT = 0.774;
+		public final static double UPPER_LIMIT = 1.95;
+		public final static double LOWER_LIMIT = 1.66;
+	
+		public final static int ROTARY_POT = 1;
+		public final static int DART_POT = 2;
+		
+		//Dart Limits
+		public final static double DART_RETRACTED = 0.95;
+		public final static double DART_EXTENDED = 0.1;
+		
 		// Left Drive PWM Constants
 		final static int LEFT_DRIVE_PWM1 = 2;
 		final static int LEFT_DRIVE_PWM2 = 3;
@@ -18,11 +33,11 @@ public class Constants {
 		// Arm PWM Constants
 		final static int ARM_ROTATION_PWM = 6;
 		final static int ARM_Y_AXIS_PWM = 7;
-		final static int ARM_CLAW_PWM = 8;  // TODO fix these
+		final static int ARM_CLAW_PWM = 8;
 		
 		// Elevator Pot Constants
 		final static double ELEVATOR_UPPER_LIMIT = 0.345;
-		final static double ELEVATOR_LOWER_LIMIT = 0.9519;  //.953- original
+		final static double ELEVATOR_LOWER_LIMIT = 0.9519; 
 		final static double ELEVATOR_HOVER_VALUE = 0.855;
 		final static double TOTE_CATCHING_POSITION = 0.8163;
 		final static double ALLOWED_DEVIATION = 0.0005;
@@ -39,6 +54,12 @@ public class Constants {
 		final static double JOYSTICK_DEADBAND = 0.1;
 		final static double TWIST_DEADBAND = 0.1;
 
+		//Power Distribution Constants
+		final static int LEFT_DRIVES = 14;
+		final static int RIGHT_DRIVES = 1;
+		final static int ARM_40 = 12;
+		final static int ARM_30 = 8;
+		
 		// ENCODER DIGITAL I/O PORT CONSTANTS
 		final static int LEFT_ENCODER_A = 0;
 		final static int LEFT_ENCODER_B = 1;

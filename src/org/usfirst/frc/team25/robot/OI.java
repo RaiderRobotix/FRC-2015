@@ -1,6 +1,7 @@
 package org.usfirst.frc.team25.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 public class OI {
 
@@ -10,18 +11,27 @@ public class OI {
 	private final Joystick m_rightStick;
 	private final Joystick m_operatorStick; // TODO add operator controls
 
-	private final DriveBase m_drivebase;
+	private final DriveBase m_drivebase; 
 	private final Arm m_arm;
 	private final Elevator m_elevator;
+
+	private final PowerDistributionPanel m_pdPanel;
 
 	private double goalPotValue;
 	private boolean m_autoSequenceRunning = false;
 	private double m_elevatorSpeed = 0.0;
 
+	private double m_averageClawCurrent = 0.0;
+	
+	private boolean m_autoArmSequence = false;
+	private double m_armAutoValue = Constants.ARM_FORWARD;
+	
 	public OI() {
 		m_leftStick = new Joystick(Constants.LEFT_JOYSTICK_PORT);
 		m_rightStick = new Joystick(Constants.RIGHT_JOYSTICK_PORT);
 		m_operatorStick = new Joystick(Constants.OPERATOR_JOYSTICK_PORT);
+
+		m_pdPanel = new PowerDistributionPanel();
 
 		m_drivebase = DriveBase.getInstance();
 		m_arm = Arm.getInstance();
@@ -35,6 +45,18 @@ public class OI {
 		return m_instance;
 	}
 
+	public void startTotePosition() { /*
+		m_autoSequenceRunning = true;
+		goalPotValue = Constants.TOTE_CATCHING_POSITION; */
+	}
+	
+	public void setAverageClawCurrent() {
+		for(int i=0; i<15; i++) {
+			m_averageClawCurrent += getCurrent(Constants.ARM_40);
+		}
+		m_averageClawCurrent /= 15;
+	}
+	
 	public double getLeftY() {
 		double yval = m_leftStick.getY();
 		if (yval > -Constants.JOYSTICK_DEADBAND
@@ -54,42 +76,50 @@ public class OI {
 			return yval;
 		}
 	}
-	
-	public double getOperatorX() {
-		double xval = m_operatorStick.getX();
-		if (xval > -Constants.JOYSTICK_DEADBAND
-				&& xval < Constants.JOYSTICK_DEADBAND) {
+
+	public double getOperatorY() {
+		double yval = m_operatorStick.getY();
+		if (yval > -Constants.JOYSTICK_DEADBAND
+				&& yval < Constants.JOYSTICK_DEADBAND) {
 			return 0.0;
 		} else {
-			return xval;
+			return yval;
 		}
+	}
+
+	public double getOperatorTwist() {
+		double tval = m_operatorStick.getTwist();
+		if (tval > -Constants.JOYSTICK_DEADBAND
+				&& tval < Constants.JOYSTICK_DEADBAND) {
+			return 0.0;
+		} else {
+			return tval;
+		}
+	}
+	
+	public double getOperatorThrottle() {
+		double tval = m_operatorStick.getThrottle();
+		tval += 2.0;
+		return tval;
 	}
 
 	public void enableDriveControls() {
 		m_drivebase.setSpeed(getLeftY(), getRightY());
-		
-		//System.out.println("Left: " + m_drivebase.getLeftEncoderDistance());
-		//System.out.println("Right: " + m_drivebase.getRightEncoderDistance());
-		
-		System.out.println("L Current: " + m_drivebase.getLeftCurrent());
-		System.out.println("R Current: " + m_drivebase.getRightCurrent());
 	}
 
 	public void enableTeleopControls() {
-
+		System.out.println("Dart: " + m_arm.getDartPot());
+		System.out.println("Rotary: " + m_arm.getRotaryPot());
+		
 		// Driverbase controls
 		enableDriveControls();
 
-		if (m_operatorStick.getTrigger()) {
+	
+		if (getOperatorTrigger()) {
 			m_drivebase.resetEncoders();
 		}
-		
-		// Arm controls
-		m_arm.setRotationSpeed(getOperatorX());
 
-		// Elevator controls
-		// System.out.println("String Pot Value: " + m_elevator.getPotValue() + "\n");
-		
+
 		if (getLeftButton(2)) {
 			m_autoSequenceRunning = true;
 			goalPotValue = Constants.ELEVATOR_LOWER_LIMIT;
@@ -102,10 +132,11 @@ public class OI {
 		}
 
 		// Terminate button
-		if (m_autoSequenceRunning && (getRightButton(5) || getRightButton(2) || getRightButton(3))) {
+		if (m_autoSequenceRunning
+				&& (getRightButton(5) || getRightButton(2) || getRightButton(3))) {
 			m_autoSequenceRunning = false;
 		}
-		
+
 		// Start manual elevator controls to raise and lower
 		if (!m_autoSequenceRunning) {
 			if (getRightButton(3)
@@ -122,16 +153,69 @@ public class OI {
 
 			if (m_elevator.potValueWithinCustomRange(
 					Constants.ELEVATOR_LOWER_LIMIT, 0.05) && getRightButton(2)) {
-				m_elevatorSpeed /= 2.0;
+				m_elevatorSpeed /= 4.0;
 			} else if (m_elevator.potValueWithinCustomRange(
 					Constants.ELEVATOR_UPPER_LIMIT, 0.05) && getRightButton(3)) {
-				m_elevatorSpeed /= 2.0;
+				m_elevatorSpeed /= 4.0;
 			}
 
-			m_elevator.setSpeed(m_elevatorSpeed);	// end manual controls
+			m_elevator.setSpeed(m_elevatorSpeed); // end manual controls
 		} else {
 			gotoPotValue(goalPotValue);
 		}
+		
+		if(getOperatorButton(3)) {
+            m_autoArmSequence = true;
+            m_armAutoValue = Constants.ARM_FORWARD;
+        }
+        if(Math.abs(m_operatorStick.getTwist()) >= 0.25) {
+            m_autoArmSequence = false;
+        }
+        if(m_arm.getRotaryPot() <= m_armAutoValue + 0.005 &&
+                m_arm.getRotaryPot() >= m_armAutoValue - 0.005 ) {
+                m_autoArmSequence = false;
+        }
+        
+        //Arm Y Controls
+        double armYVal = getOperatorY() / getOperatorThrottle();
+        
+        if(m_arm.getDartPot() > Constants.DART_RETRACTED && armYVal < 0) {
+        	m_arm.setYSpeed(0.0);
+        } else if(m_arm.getDartPot() < Constants.DART_EXTENDED && armYVal > 0) {
+        	m_arm.setYSpeed(0.0);
+        } else {
+        	m_arm.setYSpeed(armYVal);
+        }
+        	
+        
+        //Arm Rotation Controls
+        if(m_autoArmSequence) {
+            m_arm.setClawSpeed(0.0);
+            double rval = 0.0;
+            if(m_arm.getRotaryPot() > m_armAutoValue) {
+                rval = 1.0;
+            } else if(m_arm.getRotaryPot() < m_armAutoValue) {
+                rval = -1.0;
+            } else {
+                rval = 0.0;
+                m_autoArmSequence = false;
+            }
+            if(m_arm.getRotaryPot() <= m_armAutoValue + 0.2 &&
+                m_arm.getRotaryPot() >= m_armAutoValue - 0.2 ) {
+                rval /= 2.0;
+            }
+            m_arm.setRotationSpeed(rval, false);
+        } else {
+            m_arm.setRotationSpeed(getOperatorTwist() / getOperatorThrottle(), getOperatorButton(11));
+            if(getOperatorTrigger() && !getOperatorButton(2)) {
+                m_arm.setClawSpeed(-0.1);
+            }
+            else if(getOperatorButton(2) && !getOperatorTrigger()) {
+                m_arm.setClawSpeed(0.1);
+            } else {
+                m_arm.setClawSpeed(0.0);
+            }
+        }
 	}
 
 	public void gotoPotValue(double value) {
@@ -154,8 +238,8 @@ public class OI {
 			m_elevator.setSpeed(0.0);
 		} else if (!m_elevator.potValueWithinRange(value)) {
 			if (m_elevator.potValueWithinCustomRange(value, 0.075)) {
-				m_elevatorUp = Constants.ELEVATOR_UP / 2.0;
-				m_elevatorDown = Constants.ELEVATOR_DOWN / 2.0;
+				m_elevatorUp = Constants.ELEVATOR_UP / 4.0;
+				m_elevatorDown = Constants.ELEVATOR_DOWN / 4.0;
 			}
 
 			if (m_elevator.getPotValue() < value) {
@@ -168,6 +252,10 @@ public class OI {
 			}
 		}
 
+	}
+
+	public double getCurrent(int slot) {
+		return m_pdPanel.getCurrent(slot);
 	}
 
 	public boolean getOperatorButton(int b) {

@@ -56,18 +56,15 @@ public class Robot extends IterativeRobot {
      * Initialization code for teleop mode should go here.
      */
     public void teleopInit() {
-    	
+    	m_OI.setAverageClawCurrent();
+    	m_OI.startTotePosition();
     }
     
     /**
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-    	//if(!m_usingTempArmSetup) {
-    		m_OI.enableTeleopControls(); 
-    	//} else {
-    	//	m_tArmOI.enableTeleopControls();
-    	//}
+    	m_OI.enableTeleopControls(); 
     }
     
     /**
@@ -81,7 +78,7 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during test mode
      */
     public void testPeriodic() {
-    
+    	
     }
     
 }
