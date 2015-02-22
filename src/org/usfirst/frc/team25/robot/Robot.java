@@ -2,6 +2,7 @@
 package org.usfirst.frc.team25.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -14,8 +15,6 @@ public class Robot extends IterativeRobot {
 	
 	AutonController m_autonController;
 	OI m_OI;
-	
-	boolean setUpArmForAuton = false;
 	
 	/**
      * This function is run when the robot is first started up and should be
@@ -30,16 +29,15 @@ public class Robot extends IterativeRobot {
      * Initialization code for disabled mode should go here.
      */
     public void disabledInit() {
-    	if (!setUpArmForAuton) {
-    		
-    	}
+    	SmartDashboard.putBoolean("New Name", true);
+    	SmartDashboard.putBoolean("DB/Button 1", false);
     }
     
     /**
      * Periodic code for disabled mode should go here.
      */
     public void disabledPeriodic() {
-    	
+
     }
 
     /**
@@ -53,7 +51,8 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
-    	m_autonController.grabBinsFromStep();
+    	m_autonController.driveToAutoZone();
+    	//m_autonController.grabContainerFromStep();
     }
 
     /**
@@ -61,6 +60,7 @@ public class Robot extends IterativeRobot {
      */
     public void teleopInit() {
     	m_OI.startTotePosition();
+    	m_autonController.reset();
     }
     
     /**

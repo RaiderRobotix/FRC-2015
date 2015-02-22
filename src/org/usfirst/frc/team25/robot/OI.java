@@ -83,6 +83,9 @@ public class OI {
 				&& tval < Constants.JOYSTICK_DEADBAND) {
 			return 0.0;
 		} else {
+			if(Math.abs(tval) > 0.66) {
+				tval = (tval / (Math.abs(tval))) * 0.66;
+			}
 			return -tval;
 		}
 	}
@@ -169,7 +172,7 @@ public class OI {
 		}
 
 		if (m_autoArmSequence) {
-			m_autoArmSequence = m_arm.goTo(m_autoTValue, m_autoYValue);
+			m_autoArmSequence = m_arm.goTo(m_autoTValue, m_autoYValue, 0.66, 0.75);
 		} else {
 			// Arm Y Controls
 			if (m_arm.getRotaryPot() < Constants.LEFT_LIMIT) {

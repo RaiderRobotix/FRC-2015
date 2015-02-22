@@ -35,12 +35,17 @@ public class Arm {
 		return m_instance;
 	}
 
-	public void openClaw() {
+	public boolean openClaw() {
 		// TODO add
+		return false;
 	}
 
-	public void closeClaw() {
+	/**
+	 * @return false when claw is done closing based on current
+	 */
+	public boolean closeClaw() {
 		// TODO add
+		return false;
 	}
 
 	public void setClawSpeed(double speed) {
@@ -73,7 +78,7 @@ public class Arm {
 	 * @param yval Up/Down position
 	 * @return false if at the right position
 	 */
-	public boolean goTo(double tval, double yval) { // check some stuff in this
+	public boolean goTo(double tval, double yval, double rotationSpeed, double armSpeed) { // check some stuff in this
 		
 		final double ROTATE_BUFFER = 0.005;
 		final double TILT_BUFFER = 0.005;
@@ -88,26 +93,26 @@ public class Arm {
 
 		if (yval > Constants.DART_EXTENDED && getRotaryPot() > Constants.LEFT_LIMIT) {
 			// if needs to go down and rotated too far
-			setRotationSpeed(1.0);
+			setRotationSpeed(rotationSpeed);
 			setYSpeed(0.0);
 		} else if (tval > Constants.LEFT_LIMIT && getDartPot() > Constants.DART_EXTENDED + 0.01) {
 			// if needs to rotate far and arm down
-			setYSpeed(0.5); // up
+			setYSpeed(armSpeed); // up
 			setRotationSpeed(0.0);
 		} else {
 
 			if (getDartPot() < yval - TILT_BUFFER) {
-				setYSpeed(-0.5); // arm down
+				setYSpeed(-armSpeed); // arm down
 			} else if(getDartPot() > yval + TILT_BUFFER){
-				setYSpeed(0.5); // arm up
+				setYSpeed(armSpeed); // arm up
 			} else {
 				setYSpeed(0.0);
 			}
 
 			if (getRotaryPot() > tval + ROTATE_BUFFER) {
-				setRotationSpeed(1.0); // rotate left, CCW
+				setRotationSpeed(rotationSpeed); // rotate left, CCW
 			} else if(getRotaryPot() < tval - ROTATE_BUFFER){
-				setRotationSpeed(-1.0); // rotate right, CW
+				setRotationSpeed(-rotationSpeed); // rotate right, CW
 			} else {
 				setRotationSpeed(0.0);
 			}

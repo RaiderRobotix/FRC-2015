@@ -1,17 +1,11 @@
 package org.usfirst.frc.team25.robot;
 
-class Constants {
+public class Constants {
 
-		/*/Arm Rotation limits
-		final static double LOWER_COUNTER_LIMIT = 0.489;
-		final static double ARM_FORWARD = 0.551;
-		final static double UPPER_COUNTER_LIMIT = LOWER_COUNTER_LIMIT;
-		final static double UPPER_LIMIT = 0.673;
-		final static double LOWER_LIMIT = 0.61; */
-		final static double LEFT_LIMIT = 0.61;
-		final static double RIGHT_LIMIT = 0.489;
-		final static double ARM_FORWARDS = 0.551;
-		final static double ARM_BACKWARDS = 0.673;
+		final static double LEFT_LIMIT = 0.62;
+		final static double RIGHT_LIMIT = 0.50;
+		final static double ARM_FORWARDS = 0.56;
+		final static double ARM_BACKWARDS = 0.683;
 	
 		final static int ROTARY_POT = 1;
 		final static int DART_POT = 2;
