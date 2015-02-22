@@ -1,21 +1,24 @@
 package org.usfirst.frc.team25.robot;
 
-public class Constants {
+class Constants {
 
-		//Arm Rotation limits
-		public final static double LOWER_COUNTER_LIMIT = 1.056;
-		public final static double ARM_FORWARD = 1.356;
-		public final static double TOP_VALUE = 3.0;
-		public final static double UPPER_COUNTER_LIMIT = 0.774;
-		public final static double UPPER_LIMIT = 1.95;
-		public final static double LOWER_LIMIT = 1.66;
+		/*/Arm Rotation limits
+		final static double LOWER_COUNTER_LIMIT = 0.489;
+		final static double ARM_FORWARD = 0.551;
+		final static double UPPER_COUNTER_LIMIT = LOWER_COUNTER_LIMIT;
+		final static double UPPER_LIMIT = 0.673;
+		final static double LOWER_LIMIT = 0.61; */
+		final static double LEFT_LIMIT = 0.61;
+		final static double RIGHT_LIMIT = 0.489;
+		final static double ARM_FORWARDS = 0.551;
+		final static double ARM_BACKWARDS = 0.673;
 	
-		public final static int ROTARY_POT = 1;
-		public final static int DART_POT = 2;
+		final static int ROTARY_POT = 1;
+		final static int DART_POT = 2;
 		
 		//Dart Limits
-		public final static double DART_RETRACTED = 0.95;
-		public final static double DART_EXTENDED = 0.1;
+		final static double DART_RETRACTED = 0.95;
+		final static double DART_EXTENDED = 0.095;
 		
 		// Left Drive PWM Constants
 		final static int LEFT_DRIVE_PWM1 = 2;
@@ -40,6 +43,7 @@ public class Constants {
 		final static double ELEVATOR_LOWER_LIMIT = 0.9519; 
 		final static double ELEVATOR_HOVER_VALUE = 0.855;
 		final static double TOTE_CATCHING_POSITION = 0.8163;
+		final static double TOTE_SET_POSITION = 0.52;
 		final static double ALLOWED_DEVIATION = 0.0005;
 		
 		//elevator constant speeds
@@ -57,8 +61,7 @@ public class Constants {
 		//Power Distribution Constants
 		final static int LEFT_DRIVES = 14;
 		final static int RIGHT_DRIVES = 1;
-		final static int ARM_40 = 12;
-		final static int ARM_30 = 8;
+		final static int PD_CLAW = 15;
 		
 		// ENCODER DIGITAL I/O PORT CONSTANTS
 		final static int LEFT_ENCODER_A = 0;

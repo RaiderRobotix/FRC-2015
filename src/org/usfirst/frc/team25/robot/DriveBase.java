@@ -30,10 +30,8 @@ public class DriveBase {
 		m_rightEncoder = new Encoder(Constants.RIGHT_ENCODER_A,
 				Constants.RIGHT_ENCODER_B, true);
 		
-
 		m_leftEncoder.setDistancePerPulse(Constants.INCHES_PER_COUNT);
 		m_rightEncoder.setDistancePerPulse(Constants.INCHES_PER_COUNT);
-
 	}
 
 	public static DriveBase getInstance() {

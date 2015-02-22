@@ -74,4 +74,40 @@ public class Elevator {
 		return m_stringPot.get();
 	}
 
+	public boolean goToPotValue(double value) {
+		boolean m_goingUp = getPotValue() >= value;
+		boolean m_goingDown = !m_goingUp;
+		double m_elevatorUp = Constants.ELEVATOR_UP;
+		double m_elevatorDown = Constants.ELEVATOR_DOWN;
+
+		// Checking if past limits
+		if (m_goingDown
+				&& getPotValue() >= Constants.ELEVATOR_LOWER_LIMIT) {
+			setSpeed(0.0);
+			return false;
+		} else if (m_goingUp
+				&& getPotValue() <= Constants.ELEVATOR_UPPER_LIMIT) {
+			setSpeed(0.0);
+			return false;
+		} else if (potValueWithinRange(value)) {
+			setSpeed(0.0);
+			return false;
+		} else if (!potValueWithinRange(value)) {
+			if (potValueWithinCustomRange(value, 0.075)) {
+				m_elevatorUp = Constants.ELEVATOR_UP / 4.0;
+				m_elevatorDown = Constants.ELEVATOR_DOWN / 4.0;
+			}
+
+			if (getPotValue() < value) {
+				setSpeed(m_elevatorDown);
+			} else if (getPotValue() > value) {
+				setSpeed(m_elevatorUp);
+			} else {
+				setSpeed(0.0);
+				return false;
+			}
+		}
+		
+		return true;
+	}
 }

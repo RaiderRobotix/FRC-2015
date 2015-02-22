@@ -15,27 +15,31 @@ public class Robot extends IterativeRobot {
 	AutonController m_autonController;
 	OI m_OI;
 	
+	boolean setUpArmForAuton = false;
+	
 	/**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
     public void robotInit() {
     	m_autonController = AutonController.getInstance();
-    	m_OI= OI.getInstance();
+    	m_OI = OI.getInstance();
     }
     
     /**
      * Initialization code for disabled mode should go here.
      */
     public void disabledInit() {
-    	
+    	if (!setUpArmForAuton) {
+    		
+    	}
     }
     
     /**
      * Periodic code for disabled mode should go here.
      */
     public void disabledPeriodic() {
-    
+    	
     }
 
     /**
@@ -56,7 +60,6 @@ public class Robot extends IterativeRobot {
      * Initialization code for teleop mode should go here.
      */
     public void teleopInit() {
-    	m_OI.setAverageClawCurrent();
     	m_OI.startTotePosition();
     }
     
