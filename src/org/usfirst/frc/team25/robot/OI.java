@@ -97,9 +97,10 @@ public class OI {
 	}
 
 	public void enableTeleopControls() {
-		System.out.println("Dart: " + m_arm.getDartPot());
-		System.out.println("Rotary: " + m_arm.getRotaryPot());
-
+		//System.out.println("Dart: " + m_arm.getDartPot());
+		//System.out.println("Rotary: " + m_arm.getRotaryPot());
+		System.out.println("current" + m_arm.getClawCurrent());
+		
 		// Drivebase controls
 		m_drivebase.setSpeed(getLeftY(), getRightY());
 
@@ -119,6 +120,14 @@ public class OI {
 		} else if (getRightButton(4)) {
 			m_autoSequenceRunning = true;
 			goalPotValue = Constants.TOTE_SET_POSITION;
+		}
+
+		if(getOperatorTrigger() && !getOperatorButton(2)) {
+			m_arm.setClawSpeed(-1.0);
+		} else if(!getOperatorTrigger() && getOperatorButton(2)) {
+			m_arm.setClawSpeed(1.0);
+		} else {
+			m_arm.setClawSpeed(0.0);
 		}
 
 		// Terminate button

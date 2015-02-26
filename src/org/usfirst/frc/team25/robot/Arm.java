@@ -35,6 +35,10 @@ public class Arm {
 		return m_instance;
 	}
 
+	public double getCurrent() {
+		return m_pdPanel.getCurrent(Constants.PD_CLAW);
+	}
+	
 	public boolean openClaw() {
 		// TODO add
 		return false;

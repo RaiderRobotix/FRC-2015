@@ -2,6 +2,7 @@
 package org.usfirst.frc.team25.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -13,24 +14,34 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 	
+	
+	SendableChooser m_autonChooser;
 	AutonController m_autonController;
 	OI m_OI;
+	int m_autonPicked = 1;
 	
 	/**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
+	static String dashStr = "<html>Autonoumous Chooser<br><br>0- Default<br>1- Pick up can from step<br>2- Two cans from field</html>";
+	
     public void robotInit() {
     	m_autonController = AutonController.getInstance();
     	m_OI = OI.getInstance();
+    	m_autonChooser = new SendableChooser();
+    	m_autonChooser.addDefault("Move Forward (default)", 1);
+    	m_autonChooser.addObject("Grab Container From Step", 2);
+    	//m_autonChooser.addObject("Pick two cans from field", 3);
+    	SmartDashboard.putData("Choose Auton mode: ", m_autonChooser);
+    	//SmartDashboard.putNumber(dashStr, 0); */
     }
     
     /**
      * Initialization code for disabled mode should go here.
      */
     public void disabledInit() {
-    	SmartDashboard.putBoolean("New Name", true);
-    	SmartDashboard.putBoolean("DB/Button 1", false);
+    	
     }
     
     /**
@@ -44,23 +55,30 @@ public class Robot extends IterativeRobot {
      * Initialization code for autonomous mode should go here.
      */
     public void autonomousInit() {
-    	
+    	//m_autonPicked = (int) SmartDashboard.getNumber(dashStr);
+    	m_autonPicked = (int) m_autonChooser.getSelected();
+    	System.out.println("Auton Picked: " + m_autonPicked);
     }
     
     /**
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
-    	m_autonController.driveToAutoZone();
-    	//m_autonController.grabContainerFromStep();
+    	if(m_autonPicked == 0) {
+    		System.out.println("Driving Forward");
+    	} else if(m_autonPicked == 1) {
+    		System.out.println("Picking container from the step.");
+    	} else if(m_autonPicked == 2) {
+    		System.out.println("Picking two containers from field");
+    	}
     }
 
     /**
      * Initialization code for teleop mode should go here.
      */
     public void teleopInit() {
-    	m_OI.startTotePosition();
-    	m_autonController.reset();
+//    	m_OI.startTotePosition();
+ //   	m_autonController.reset();
     }
     
     /**
