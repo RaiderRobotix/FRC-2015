@@ -30,32 +30,29 @@ public class Robot extends IterativeRobot {
     	m_autonController = AutonController.getInstance();
     	m_OI = OI.getInstance();
     	m_autonChooser = new SendableChooser();
-    	m_autonChooser.addDefault("Move Forward (default)", 1);
-    	m_autonChooser.addObject("Grab Container From Step", 2);
-    	//m_autonChooser.addObject("Pick two cans from field", 3);
+    	m_autonChooser.addDefault("Do Nothing (default)", 0);
+    	m_autonChooser.addObject("Move Forward", 1);
+    	m_autonChooser.addObject("Push Tote to Auto Zone", 2);
+    	m_autonChooser.addObject("Grab Container From Step", 3);
     	SmartDashboard.putData("Choose Auton mode: ", m_autonChooser);
-    	//SmartDashboard.putNumber(dashStr, 0); */
     }
     
     /**
      * Initialization code for disabled mode should go here.
      */
     public void disabledInit() {
-    	
     }
     
     /**
      * Periodic code for disabled mode should go here.
      */
     public void disabledPeriodic() {
-
     }
 
     /**
      * Initialization code for autonomous mode should go here.
      */
     public void autonomousInit() {
-    	//m_autonPicked = (int) SmartDashboard.getNumber(dashStr);
     	m_autonPicked = (int) m_autonChooser.getSelected();
     	System.out.println("Auton Picked: " + m_autonPicked);
     }
@@ -64,12 +61,12 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
-    	if(m_autonPicked == 0) {
-    		System.out.println("Driving Forward");
-    	} else if(m_autonPicked == 1) {
-    		System.out.println("Picking container from the step.");
+    	if(m_autonPicked == 1) {
+    		m_autonController.driveToAutoZone();
     	} else if(m_autonPicked == 2) {
-    		System.out.println("Picking two containers from field");
+    		m_autonController.pushToteToAutoZone();
+    	} else if(m_autonPicked == 3) {
+    		m_autonController.grabContainerFromStep();
     	}
     }
 

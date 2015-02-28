@@ -40,16 +40,24 @@ public class Arm {
 	}
 	
 	public boolean openClaw() {
-		// TODO add
-		return false;
+		if(getClawCurrent() > 15.0) {
+			setClawSpeed(0.0);
+			return false;
+		}
+		setClawSpeed(1.0);
+		return true;
 	}
 
 	/**
 	 * @return false when claw is done closing based on current
 	 */
 	public boolean closeClaw() {
-		// TODO add
-		return false;
+		if(getClawCurrent() > 15.0) {
+			setClawSpeed(0.0);
+			return false;
+		}
+		setClawSpeed(-1.0);
+		return true;
 	}
 
 	public void setClawSpeed(double speed) {
@@ -105,6 +113,10 @@ public class Arm {
 			setRotationSpeed(0.0);
 		} else {
 
+			if(Math.abs(getDartPot() - yval) <= 0.075) {
+				armSpeed = (armSpeed / Math.abs(armSpeed)) * 0.5;
+			}
+				
 			if (getDartPot() < yval - TILT_BUFFER) {
 				setYSpeed(-armSpeed); // arm down
 			} else if(getDartPot() > yval + TILT_BUFFER){

@@ -1,7 +1,7 @@
 package org.usfirst.frc.team25.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Timer;
 
 public class OI {
 
@@ -15,10 +15,16 @@ public class OI {
 	private final Arm m_arm;
 	private final Elevator m_elevator;
 
+	private boolean m_clawAuto = false;
+	private boolean m_clawClosing = false;
 	private double goalPotValue;
 	private boolean m_autoSequenceRunning = false;
 	private double m_elevatorSpeed = 0.0;
-
+	private boolean yComplete = false;
+	private boolean runningArmNormalSeq = false;
+	private boolean timerGoing = false;
+	private Timer m_timer;
+	
 	private boolean m_autoArmSequence = false;
 	private double m_autoYValue = 0.0;
 	private double m_autoTValue = 0.0;
@@ -98,8 +104,8 @@ public class OI {
 
 	public void enableTeleopControls() {
 		//System.out.println("Dart: " + m_arm.getDartPot());
-		//System.out.println("Rotary: " + m_arm.getRotaryPot());
-		System.out.println("current" + m_arm.getClawCurrent());
+		System.out.println("Rotary: " + m_arm.getRotaryPot());
+		//System.out.println("current" + m_arm.getClawCurrent());
 		
 		// Drivebase controls
 		m_drivebase.setSpeed(getLeftY(), getRightY());
@@ -123,13 +129,37 @@ public class OI {
 		}
 
 		if(getOperatorTrigger() && !getOperatorButton(2)) {
-			m_arm.setClawSpeed(-1.0);
+			m_arm.setClawSpeed(-1.0);  //close
 		} else if(!getOperatorTrigger() && getOperatorButton(2)) {
-			m_arm.setClawSpeed(1.0);
+			m_arm.setClawSpeed(1.0);  //open
 		} else {
 			m_arm.setClawSpeed(0.0);
+		} //*/
+		/*
+		if(getOperatorTrigger()) {
+			m_clawAuto = true;
+			m_clawClosing = true;
+		} else if(getOperatorButton(2)) {
+			m_clawAuto = true;
+			m_clawClosing = false;
+		}
+		
+		if(getOperatorButton(12)) {
+			m_arm.setClawSpeed(0.0);
+			m_arm.setRotationSpeed(0.0);
+			m_arm.setYSpeed(0.0);
+			m_clawAuto = false;
+			m_autoArmSequence = false;
 		}
 
+		if(m_clawAuto) {
+			if(m_clawClosing) {
+				m_clawAuto = m_arm.closeClaw();
+			} else {
+				m_clawAuto = m_arm.openClaw();
+			}
+		} //*/
+		
 		// Terminate button
 		if (m_autoSequenceRunning
 				&& (getRightButton(5) || getRightButton(2) || getRightButton(3))) {
@@ -167,6 +197,7 @@ public class OI {
 
 		if (getOperatorButton(3)) {
 			m_autoArmSequence = true;
+			runningArmNormalSeq = true;
 			m_autoTValue = Constants.ARM_BACKWARDS;
 			m_autoYValue = Constants.DART_EXTENDED;
 		} else if (getOperatorButton(4)) {
@@ -180,8 +211,34 @@ public class OI {
 			m_autoArmSequence = false;
 		}
 
-		if (m_autoArmSequence) {
-			m_autoArmSequence = m_arm.goTo(m_autoTValue, m_autoYValue, 0.66, 0.75);
+		if(m_autoArmSequence && runningArmNormalSeq) {
+			if(timerGoing) {
+				if(m_timer.get() > 1.0) {
+					m_timer.stop();
+					timerGoing = false;
+				}
+			} else if(!yComplete && m_arm.getDartPot() <= m_autoYValue + 0.005) {
+				m_arm.setYSpeed(0.0);
+				yComplete = true;
+				timerGoing = true;
+				m_timer.start();
+				m_timer.reset();
+			} else if(!yComplete) {
+				//still moving dart
+				m_arm.goTo(m_arm.getRotaryPot(), Constants.DART_EXTENDED, 0.0, 1.0);
+			} else if(m_arm.getRotaryPot() >= Constants.ARM_BACKWARDS - 0.005 && yComplete){
+				//complete
+				m_arm.setYSpeed(0.0);
+				m_arm.setRotationSpeed(0.0);
+				yComplete = false;
+				runningArmNormalSeq = false;
+				m_autoArmSequence = false;
+			} else {
+				//twisting
+				m_arm.goTo(Constants.ARM_BACKWARDS, m_arm.getDartPot(), 0.66, 0.0);
+			}
+		} else if (m_autoArmSequence) {
+			m_autoArmSequence = m_arm.goTo(m_autoTValue, m_autoYValue, 0.66, 1.0);
 		} else {
 			// Arm Y Controls
 			if (m_arm.getRotaryPot() < Constants.LEFT_LIMIT) {
