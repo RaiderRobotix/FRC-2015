@@ -33,7 +33,8 @@ public class Robot extends IterativeRobot {
     	m_autonChooser.addDefault("Do Nothing (default)", 0);
     	m_autonChooser.addObject("Move Forward", 1);
     	m_autonChooser.addObject("Push Tote to Auto Zone", 2);
-    	m_autonChooser.addObject("Grab Container From Step", 3);
+    	m_autonChooser.addObject("Push container to Auto Zone (robot is backwards)", 3);
+    	m_autonChooser.addObject("Grab Container From Step", 4);
     	SmartDashboard.putData("Choose Auton mode: ", m_autonChooser);
     }
     
@@ -66,6 +67,8 @@ public class Robot extends IterativeRobot {
     	} else if(m_autonPicked == 2) {
     		m_autonController.pushToteToAutoZone();
     	} else if(m_autonPicked == 3) {
+    		m_autonController.pushContainerToAutoZone();
+    	} else if(m_autonPicked == 4) {
     		m_autonController.grabContainerFromStep();
     	}
     }

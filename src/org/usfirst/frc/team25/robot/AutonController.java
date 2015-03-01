@@ -88,6 +88,31 @@ public class AutonController {
 		}
 	}
 	
+	public void pushContainerToAutoZone() {
+		double distance = m_drivebase.getLeftEncoderDistance();
+		System.out.println(distance);
+		
+		if (m_step == 0) {
+			m_drivebase.resetEncoders();
+			m_step++;
+		} else if (m_step == 1) {
+			if (distance > -135) {
+				m_drivebase.setSpeed(0.3);
+			} else {
+				m_step++;
+			}
+		} else if (m_step == 2) {
+			// STOP
+			if (distance <= -135 && distance >= -140) {
+				m_drivebase.setSpeed(-0.1);
+			} else {
+				m_step++;
+			}
+		} else {
+			m_drivebase.setSpeed(0.0);
+		}
+	}
+	
 	public void pushToteToAutoZone() {
 		double distance = m_drivebase.getLeftEncoderDistance();
 		System.out.println(distance);
@@ -96,14 +121,14 @@ public class AutonController {
 			m_drivebase.resetEncoders();
 			m_step++;
 		} else if (m_step == 1) {
-			if (distance < 65) {
+			if (distance < 135) {
 				m_drivebase.setSpeed(-0.3);
 			} else {
 				m_step++;
 			}
 		} else if (m_step == 2) {
 			// STOP
-			if (distance >= 65 && distance <= 70) {
+			if (distance >= 135 && distance <= 140) {
 				m_drivebase.setSpeed(0.1);
 			} else {
 				m_step++;
