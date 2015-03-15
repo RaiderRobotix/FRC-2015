@@ -2,6 +2,7 @@ package org.usfirst.frc.team25.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class OI {
 
@@ -105,10 +106,16 @@ public class OI {
 	}
 
 	public void enableTeleopControls() {
-		System.out.println("Dart: " + m_arm.getDartPot());
-		System.out.println("Rotary: " + m_arm.getRotaryPot());
+		//System.out.println("Dart: " + m_arm.getDartPot());
+		//System.out.println("Rotary: " + m_arm.getRotaryPot());
 		// System.out.println("current" + m_arm.getClawCurrent());
 
+		
+		SmartDashboard.putNumber("Dart", m_arm.getDartPot());
+		SmartDashboard.putNumber("Rotary", m_arm.getRotaryPot());
+		SmartDashboard.putNumber("String", m_elevator.getPotValue());
+	
+		
 		// Drivebase controls
 		m_drivebase.setSpeed(getLeftY(), getRightY());
 
@@ -184,16 +191,11 @@ public class OI {
 		}
 
 		// ARM CONTROLS V V V
-
-		if (getOperatorButton(12)) {
-			m_autoArmSequence = false;
-		}
-
 		if (getOperatorButton(3)) {
 			m_autoArmSequence = true;
-			runningArmNormalSeq = true;
-			yComplete = false;
-			timerGoing = false;
+			//runningArmNormalSeq = true;
+			//yComplete = false;
+			//timerGoing = false;
 			m_autoTValue = Constants.ARM_BACKWARDS;
 			m_autoYValue = Constants.DART_EXTENDED;
 		} else if (getOperatorButton(4)) {
@@ -216,24 +218,13 @@ public class OI {
 			m_autoArmSequence = false;
 		}
 
+		
+		if (getOperatorButton(12)) {
+			m_autoArmSequence = false;
+		}
+		
 		if (!getOperatorButton(12)) {
-			/*
-			 * if(m_autoArmSequence && runningArmNormalSeq) { if(timerGoing) {
-			 * if(m_timer.get() > 1.0) { m_timer.stop(); timerGoing = false; } }
-			 * else if(!yComplete && m_arm.getDartPot() <= m_autoYValue + 0.005)
-			 * { m_arm.setYSpeed(0.0); yComplete = true; timerGoing = true;
-			 * m_timer.start(); m_timer.reset(); } else if(!yComplete) { //still
-			 * moving dart m_arm.goTo(m_arm.getRotaryPot(),
-			 * Constants.DART_EXTENDED, 0.0, 1.0); } else
-			 * if(m_arm.getRotaryPot() >= Constants.ARM_BACKWARDS - 0.005 &&
-			 * yComplete){ //complete m_arm.setYSpeed(0.0);
-			 * m_arm.setRotationSpeed(0.0); yComplete = false; m_autoArmSequence
-			 * = false; runningArmNormalSeq = false; } else if(yComplete &&
-			 * m_arm.getRotaryPot() < m_autoTValue - 0.005){ //twisting
-			 * m_arm.goTo(Constants.ARM_BACKWARDS, m_arm.getDartPot(), 0.66,
-			 * 0.0); } else { m_arm.setYSpeed(0.0); m_arm.setRotationSpeed(0.0);
-			 * } } else
-			 */if (m_autoArmSequence) {
+			if (m_autoArmSequence) {
 				m_autoArmSequence = m_arm.goTo(m_autoTValue, m_autoYValue,
 						0.66, 1.0);
 			} else {
@@ -263,6 +254,8 @@ public class OI {
 
 						m_arm.setYSpeed(armYVal);
 					}
+				} else {
+					m_arm.setYSpeed(0.0);
 				}
 
 				double armTVal = getOperatorTwist();
