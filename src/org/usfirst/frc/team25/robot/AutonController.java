@@ -8,6 +8,7 @@ public class AutonController {
 	
 	private final DriveBase m_drivebase;
 	private final Arm m_arm;
+	private final Elevator m_elevator;
 	
 	private int m_step;
 	private final Timer m_timer;
@@ -15,6 +16,7 @@ public class AutonController {
 	private AutonController() {
 		m_drivebase = DriveBase.getInstance();
 		m_arm = Arm.getInstance();
+		m_elevator = Elevator.getInstance();
 		m_step = 0;
 		m_timer = new Timer();
 	}
@@ -33,6 +35,7 @@ public class AutonController {
 	/**
 	 * Drives forward the length from one bin on the step to another.
 	 */
+	
 	public void driveToNextContainer() {
 		
 		double distance = m_drivebase.getLeftEncoderDistance();
@@ -110,6 +113,128 @@ public class AutonController {
 			}
 		} else {
 			m_drivebase.setSpeed(0.0);
+		}
+	}
+	
+	public void toteAndCanToAutoZone() {
+		double distance = m_drivebase.getLeftEncoderDistance();
+		
+		if(m_step == 0) {
+			m_drivebase.resetEncoders();
+			m_step++;
+		} else if(m_step == 1) {
+			if(m_elevator.getPotValue() > Constants.TOTE_CATCHING_POSITION) {
+				m_elevator.setSpeed(Constants.ELEVATOR_UP);
+			} else {
+				m_elevator.setSpeed(0.0);
+				m_step++;
+			}
+		} else if (m_step == 2) {
+			if (distance < 30) {
+				m_drivebase.setSpeed(-0.3);
+			} else {
+				m_step++;
+			}
+		} else if (m_step == 3) {
+			// STOP
+			if (distance >= 30 && distance <= 35) {
+				m_drivebase.setSpeed(0.1);
+			} else {
+				m_step++;
+			}
+		} else if (m_step == 4){
+			m_drivebase.setSpeed(0.0);
+			m_step++;
+		} else if(m_step == 5) {
+			if(!m_arm.goTo(Constants.ARM_FORWARDS, m_arm.getDartPot(), 0.8, 0.0)) {
+				m_step++;
+			}
+		} else if(m_step == 6) {
+			m_arm.setRotationSpeed(0.0);
+			m_step++;
+		} else if(m_step == 7) {
+			m_timer.start();
+			m_timer.reset();
+			m_step++;
+		} else if(m_step == 8) {
+			if(m_timer.get() < 0.8) {
+				m_arm.setClawSpeed(Constants.CLAW_OPEN);
+			} else {
+				m_timer.stop();
+				m_arm.setClawSpeed(0.0);
+				m_step++;
+			}
+		} else if(m_step == 9) {
+			if(!m_arm.goTo(m_arm.getRotaryPot(), 0.975, 0.0, 1.0)) {
+				m_step++;
+			}
+		} else if(m_step == 10) {
+			m_arm.setYSpeed(0.0);
+			m_drivebase.resetEncoders();
+			m_step++;
+		} else if (m_step == 11) {
+			if (distance > -15) {
+				m_drivebase.setSpeed(0.3);
+			} else {
+				m_drivebase.setSpeed(0.0);
+				m_timer.start();
+				m_timer.reset();
+				m_step++;
+			}
+		} else if(m_step == 12) {
+			if(m_timer.get() < 1.1) {
+				m_arm.setClawSpeed(Constants.CLAW_CLOSE);
+			} else {
+				m_arm.setClawSpeed(0.0);
+				m_timer.stop();
+				m_step++;
+			}
+		} else if(m_step == 13) {
+			if(!m_arm.goTo((Constants.RIGHT_LIMIT + 0.05), 0.95, 0.75, 1.0)) {
+				m_arm.setYSpeed(0.0);
+				m_arm.setRotationSpeed(0.0);
+				m_timer.start();
+				m_timer.reset();
+				m_step++;
+			}
+		} else if(m_step == 14) {
+			if(m_timer.get() > 0.5) {
+				m_timer.reset();
+				m_step++;
+			}
+		} else if(m_step == 15) {
+			if (m_timer.get() < 0.7) {
+				m_drivebase.setSpeed(-1.0, 1.0);
+			} else {
+				m_drivebase.setSpeed(0.0);
+				m_timer.reset();
+				m_step++;
+			}
+		} else if(m_step == 16) {
+			if(m_timer.get() < 1.15) {
+				m_drivebase.setSpeed(-1.0, -0.8);
+			} else if (m_timer.get() < 1.45) {
+				m_drivebase.setSpeed(0.1, 0.1);
+			} else {
+				m_drivebase.setSpeed(0.0);
+				m_timer.stop();
+				m_step++;
+			}
+		} else if(m_step == 17) {
+			if(!m_arm.goTo(Constants.LEFT_LIMIT, m_arm.getDartPot(), 0.66, 0.0)) {
+				m_arm.setRotationSpeed(0.0);
+				m_step++;
+			}
+		} else if(m_step == 18) {
+			if(!m_elevator.goToPotValue(Constants.ELEVATOR_LOWER_LIMIT)) {
+				m_elevator.setSpeed(0.0);
+				m_step++;
+			}
+		} else {
+			m_drivebase.setSpeed(0.0);
+			m_arm.setYSpeed(0.0);
+			m_arm.setRotationSpeed(0.0);
+			m_arm.setClawSpeed(0.0);
 		}
 	}
 	
@@ -255,35 +380,59 @@ public class AutonController {
 		
 		if (m_step == 0) {
 			m_drivebase.resetEncoders();
+			m_timer.start();
+			m_timer.reset();
 			m_step++;
-		}
-		if (m_step == 1) {
+		} else if(m_step == 1) {
+			if(m_timer.get() < 1.0) {
+				m_arm.goTo(Constants.ARM_FORWARDS, m_arm.getDartPot(), 0.66, 0.0);
+				m_arm.setClawSpeed(Constants.CLAW_OPEN);
+			} else {
+				m_arm.setClawSpeed(0.0);
+				if(!m_arm.goTo(Constants.ARM_FORWARDS, m_arm.getDartPot(), 0.66, 0.0)) {
+					m_timer.stop();
+					m_arm.setRotationSpeed(0.0);
+					m_step++;
+				}
+			}
+		} else if (m_step == 2) {
 			
 			// Drive backwards towards step
 			if (distance < 12) {
 				m_drivebase.setSpeed(0.33);
 			} else {
 				m_drivebase.setSpeed(0.0);
+				m_timer.start();
+				m_timer.reset();
+				m_drivebase.resetEncoders();
 			}
-			
-			// Lower arm
-			if(!m_arm.goTo(m_arm.getRotaryPot(), 0.72, 1.0, 1.0)) {
-				m_arm.setRotationSpeed(0.0);
+		} else if(m_step == 3) {
+			if(m_timer.get() < 0.25) {
+				m_drivebase.setSpeed(-0.1);
+			} else {
+				m_drivebase.setSpeed(0.0);
+				m_timer.stop();
+				m_step++;
+			}
+		} else if(m_step == 4) {
+			if(!m_arm.goTo(m_arm.getRotaryPot(), 0.6515, 0.0, 1.0)) {
 				m_arm.setYSpeed(0.0);
-				
-				m_drivebase.resetEncoders();
+				m_timer.start();
+				m_timer.reset();
 				m_step++;
 			}
-		} else if (m_step == 2) {
+		} else if (m_step == 5) {
 			// Grab the can
-			if(!m_arm.closeClaw()) {
+			if(m_timer.get() < 1.0) {
+				m_arm.setClawSpeed(Constants.CLAW_CLOSE);
+			} else {
+				m_timer.stop();
 				m_arm.setClawSpeed(0.0);
-				m_drivebase.resetEncoders();
 				m_step++;
 			}
-		} else if (m_step == 3) {
+		} else if (m_step == 6) {
 			
-			m_arm.goTo(m_arm.getRotaryPot(), Constants.DART_EXTENDED, 1.0, 1.0);
+			m_arm.goTo(m_arm.getRotaryPot(), Constants.DART_EXTENDED, 0.0, 1.0);
 			
 			if (distance < 20) {
 				m_drivebase.setSpeed(-0.5);
@@ -291,23 +440,14 @@ public class AutonController {
 				m_drivebase.setSpeed(0.0);
 				m_step++;
 			}
-		} else if (m_step == 4) {
-			// Stop driving
-			/*boolean stopped = false;
-			if (distance >=65 && distance <= 70) {
-				m_drivebase.setSpeed(0.5);
-			} else {
-				m_drivebase.setSpeed(0.0);
-				stopped = true;
-			}
-			*/
+		} else if (m_step == 7) {
 			// Continue raising arm up, go to next step when complete.
-			if (!m_arm.goTo(m_arm.getRotaryPot(), Constants.DART_EXTENDED, 1.0, 1.0) ) { //&& stopped) {
+			if (!m_arm.goTo(m_arm.getRotaryPot(), Constants.DART_EXTENDED, 0.0, 1.0) ) { //&& stopped) {
 				m_step++;
 			}
-		}
-		else {
+		} else {
 			m_drivebase.setSpeed(0.0);
+			m_arm.setClawSpeed(0.0);
 			m_arm.setRotationSpeed(0.0);
 			m_arm.setYSpeed(0.0);
 		}

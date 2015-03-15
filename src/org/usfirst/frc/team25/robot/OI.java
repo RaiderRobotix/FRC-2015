@@ -114,7 +114,7 @@ public class OI {
 		SmartDashboard.putNumber("Dart", m_arm.getDartPot());
 		SmartDashboard.putNumber("Rotary", m_arm.getRotaryPot());
 		SmartDashboard.putNumber("String", m_elevator.getPotValue());
-	
+		SmartDashboard.putNumber("Claw Current", m_arm.getClawCurrent());
 		
 		// Drivebase controls
 		m_drivebase.setSpeed(getLeftY(), getRightY());
@@ -222,6 +222,7 @@ public class OI {
 		if (getOperatorButton(12)) {
 			m_autoArmSequence = false;
 		}
+		
 		
 		if (!getOperatorButton(12)) {
 			if (m_autoArmSequence) {

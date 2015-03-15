@@ -34,7 +34,8 @@ public class Robot extends IterativeRobot {
     	m_autonChooser.addObject("Move Forward", 1);
     	m_autonChooser.addObject("Push Tote to Auto Zone", 2);
     	m_autonChooser.addObject("Push container to Auto Zone (robot is backwards)", 3);
-    	m_autonChooser.addObject("Grab Container From Step", 4);
+    	//m_autonChooser.addObject("Grab Container From Step", 4);
+    	m_autonChooser.addObject("Bring one Tote and Can to Auto Zone", 5);
     	SmartDashboard.putData("Choose Auton mode: ", m_autonChooser);
     }
     
@@ -70,6 +71,8 @@ public class Robot extends IterativeRobot {
     		m_autonController.pushContainerToAutoZone();
     	} else if(m_autonPicked == 4) {
     		m_autonController.grabContainerFromStep();
+    	} else if(m_autonPicked == 5) {
+    		m_autonController.toteAndCanToAutoZone();
     	}
     }
 
@@ -77,8 +80,7 @@ public class Robot extends IterativeRobot {
      * Initialization code for teleop mode should go here.
      */
     public void teleopInit() {
-//    	m_OI.startTotePosition();
- //   	m_autonController.reset();
+    	m_autonController.reset();
     }
     
     /**

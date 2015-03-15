@@ -40,7 +40,7 @@ public class Arm {
 	}
 	
 	public boolean openClaw() {
-		if(getClawCurrent() > 15.0) {
+		if(getClawCurrent() > 50.0) {
 			setClawSpeed(0.0);
 			return false;
 		}
@@ -52,7 +52,7 @@ public class Arm {
 	 * @return false when claw is done closing based on current
 	 */
 	public boolean closeClaw() {
-		if(getClawCurrent() > 15.0) {
+		if(getClawCurrent() > 50.0) {
 			setClawSpeed(0.0);
 			return false;
 		}

@@ -2,17 +2,17 @@ package org.usfirst.frc.team25.robot;
 
 public class Constants {
 
-		final static double LEFT_LIMIT = 0.62;
-		final static double RIGHT_LIMIT = 0.50;
-		final static double ARM_FORWARDS = 0.56;
-		final static double ARM_BACKWARDS = 0.683;
+		final static double LEFT_LIMIT = 0.51;
+		final static double RIGHT_LIMIT = 0.385;
+		final static double ARM_FORWARDS = 0.4455;
+		final static double ARM_BACKWARDS = 0.5675;
 	
 		final static int ROTARY_POT = 1;
 		final static int DART_POT = 2;
 		
 		//Dart Limits
-		final static double DART_RETRACTED = 0.95;
-		final static double DART_EXTENDED = 0.095;
+		final static double DART_RETRACTED = 0.983;
+		final static double DART_EXTENDED = 0.1515;
 		
 		// Left Drive PWM Constants
 		final static int LEFT_DRIVE_PWM1 = 2;
@@ -44,6 +44,11 @@ public class Constants {
 		final static private double ELEVATOR_SPEED = 1.0;
 		final static double ELEVATOR_UP = -ELEVATOR_SPEED;
 		final static double ELEVATOR_DOWN = ELEVATOR_SPEED;
+		
+		//claw speed
+		final static private double CLAW_SPEED = 1.0;
+		final static double CLAW_OPEN = CLAW_SPEED;
+		final static double CLAW_CLOSE = -CLAW_SPEED;
 		
 		// Joystick Ports
 		final static int LEFT_JOYSTICK_PORT = 0;
