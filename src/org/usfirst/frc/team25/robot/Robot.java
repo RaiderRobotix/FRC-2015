@@ -24,8 +24,7 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
-	static String dashStr = "<html>Autonoumous Chooser<br><br>0- Default<br>1- Pick up can from step<br>2- Two cans from field</html>";
-	
+
     public void robotInit() {
     	m_autonController = AutonController.getInstance();
     	m_OI = OI.getInstance();
@@ -36,6 +35,9 @@ public class Robot extends IterativeRobot {
     	m_autonChooser.addObject("Push container to Auto Zone (robot is backwards)", 3);
     	//m_autonChooser.addObject("Grab Container From Step", 4);
     	m_autonChooser.addObject("Bring one Tote and Can to Auto Zone", 5);
+    	m_autonChooser.addObject("Arm bring one can to auto zone", 6);
+    	m_autonChooser.addObject("Grab from step (left)", 7);
+    	m_autonChooser.addObject("Grab from step (right)", 8);
     	SmartDashboard.putData("Choose Auton mode: ", m_autonChooser);
     }
     
@@ -70,9 +72,15 @@ public class Robot extends IterativeRobot {
     	} else if(m_autonPicked == 3) {
     		m_autonController.pushContainerToAutoZone();
     	} else if(m_autonPicked == 4) {
-    		m_autonController.grabContainerFromStep();
+    		//m_autonController.grabContainerFromStep();
     	} else if(m_autonPicked == 5) {
     		m_autonController.toteAndCanToAutoZone();
+    	} else if(m_autonPicked == 6) {
+    		m_autonController.armGrabOneCan();
+    	} else if(m_autonPicked == 7) {
+    		m_autonController.getCanFromStep(true);  //left
+    	} else if(m_autonPicked == 8) {
+    		m_autonController.getCanFromStep(false);  //right
     	}
     }
 
@@ -81,6 +89,10 @@ public class Robot extends IterativeRobot {
      */
     public void teleopInit() {
     	m_autonController.reset();
+    	SmartDashboard.putNumber("Rotary Pot Limit (Arm Over Cage)", Constants.ARM_BACKWARDS);
+    	SmartDashboard.putNumber("Rotary Left Limit", Constants.LEFT_LIMIT);
+    	SmartDashboard.putNumber("Rotary Pot Limit (Arm Behind Robot)", Constants.ARM_FORWARDS);
+    	SmartDashboard.putNumber("Rotary Right Limit", Constants.RIGHT_LIMIT);
     }
     
     /**

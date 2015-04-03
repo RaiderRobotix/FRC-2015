@@ -16,7 +16,7 @@ public class Arm {
 	private final Talon m_armYAxis;
 
 	private final PowerDistributionPanel m_pdPanel;
-	
+
 	public Arm() {
 		m_claw = new Talon(Constants.ARM_CLAW_PWM);
 		m_rotation = new Talon(Constants.ARM_ROTATION_PWM);
@@ -24,7 +24,7 @@ public class Arm {
 
 		m_rotaryPot = new AnalogPotentiometer(Constants.ROTARY_POT);
 		m_dartPot = new AnalogPotentiometer(Constants.DART_POT);
-		
+
 		m_pdPanel = new PowerDistributionPanel();
 	}
 
@@ -38,9 +38,9 @@ public class Arm {
 	public double getCurrent() {
 		return m_pdPanel.getCurrent(Constants.PD_CLAW);
 	}
-	
+
 	public boolean openClaw() {
-		if(getClawCurrent() > 50.0) {
+		if (getClawCurrent() > 50.0) {
 			setClawSpeed(0.0);
 			return false;
 		}
@@ -51,8 +51,19 @@ public class Arm {
 	/**
 	 * @return false when claw is done closing based on current
 	 */
+	public boolean rotateToLeftLimit() {
+		final double BUFFER = 0.05;
+		if (getRotaryPot() > Constants.LEFT_LIMIT - BUFFER
+				&& getRotaryPot() < Constants.LEFT_LIMIT + BUFFER) {
+			setRotationSpeed(0.0);
+			return false;
+		}
+		setRotationSpeed(-0.4);
+		return true;
+	}
+
 	public boolean closeClaw() {
-		if(getClawCurrent() > 50.0) {
+		if (getClawCurrent() > 50.0) {
 			setClawSpeed(0.0);
 			return false;
 		}
@@ -63,7 +74,7 @@ public class Arm {
 	public void setClawSpeed(double speed) {
 		m_claw.set(speed);
 	}
-	
+
 	public double getClawCurrent() {
 		return m_pdPanel.getCurrent(Constants.PD_CLAW);
 	}
@@ -86,40 +97,47 @@ public class Arm {
 
 	/**
 	 * 
-	 * @param tval Twist value
-	 * @param yval Up/Down position
+	 * @param tval
+	 *            Twist value
+	 * @param yval
+	 *            Up/Down position
 	 * @return false if at the right position
 	 */
-	public boolean goTo(double tval, double yval, double rotationSpeed, double armSpeed) { // check some stuff in this
-		
+	public boolean goTo(double tval, double yval, double rotationSpeed,
+			double armSpeed) { // check some stuff in this
+
 		final double ROTATE_BUFFER = 0.005;
 		final double TILT_BUFFER = 0.005;
-		
+
 		// if complete
-		if (getRotaryPot() < tval + ROTATE_BUFFER && getRotaryPot() > tval - ROTATE_BUFFER
-				&& getDartPot() < yval + TILT_BUFFER && getDartPot() > yval - TILT_BUFFER) {
+		if (getRotaryPot() < tval + ROTATE_BUFFER
+				&& getRotaryPot() > tval - ROTATE_BUFFER
+				&& getDartPot() < yval + TILT_BUFFER
+				&& getDartPot() > yval - TILT_BUFFER) {
 			setYSpeed(0.0);
 			setRotationSpeed(0.0);
 			return false;
 		}
 
-		if (yval > Constants.DART_EXTENDED && getRotaryPot() > Constants.LEFT_LIMIT) {
+		if (yval > Constants.DART_EXTENDED
+				&& getRotaryPot() > Constants.LEFT_LIMIT) {
 			// if needs to go down and rotated too far
 			setRotationSpeed(rotationSpeed);
 			setYSpeed(0.0);
-		} else if (tval > Constants.LEFT_LIMIT && getDartPot() > Constants.DART_EXTENDED + 0.01) {
+		} else if (tval > Constants.LEFT_LIMIT
+				&& getDartPot() > Constants.DART_EXTENDED + 0.01) {
 			// if needs to rotate far and arm down
 			setYSpeed(armSpeed); // up
 			setRotationSpeed(0.0);
 		} else {
 
-			if(Math.abs(getDartPot() - yval) <= 0.075) {
+			if (Math.abs(getDartPot() - yval) <= 0.075) {
 				armSpeed = (armSpeed / Math.abs(armSpeed)) * 0.5;
 			}
-				
+
 			if (getDartPot() < yval - TILT_BUFFER) {
 				setYSpeed(-armSpeed); // arm down
-			} else if(getDartPot() > yval + TILT_BUFFER){
+			} else if (getDartPot() > yval + TILT_BUFFER) {
 				setYSpeed(armSpeed); // arm up
 			} else {
 				setYSpeed(0.0);
@@ -127,7 +145,7 @@ public class Arm {
 
 			if (getRotaryPot() > tval + ROTATE_BUFFER) {
 				setRotationSpeed(rotationSpeed); // rotate left, CCW
-			} else if(getRotaryPot() < tval - ROTATE_BUFFER){
+			} else if (getRotaryPot() < tval - ROTATE_BUFFER) {
 				setRotationSpeed(-rotationSpeed); // rotate right, CW
 			} else {
 				setRotationSpeed(0.0);

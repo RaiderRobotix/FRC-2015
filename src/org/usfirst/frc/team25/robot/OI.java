@@ -1,7 +1,7 @@
 package org.usfirst.frc.team25.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class OI {
@@ -11,21 +11,16 @@ public class OI {
 	private final Joystick m_leftStick;
 	private final Joystick m_rightStick;
 	private final Joystick m_operatorStick; // TODO add operator controls
-
+	
+	private final PowerDistributionPanel m_pdp;
+	
 	private final DriveBase m_drivebase;
 	private final Arm m_arm;
 	private final Elevator m_elevator;
 
-	private boolean m_clawAuto = false;
-	private boolean m_clawClosing = false;
 	private double goalPotValue;
 	private boolean m_autoSequenceRunning = false;
 	private double m_elevatorSpeed = 0.0;
-	private boolean yComplete = false;
-	private boolean runningArmNormalSeq = false;
-	private boolean timerGoing = false;
-	private Timer m_timer;
-
 	private boolean m_autoArmSequence = false;
 	private double m_autoYValue = 0.0;
 	private double m_autoTValue = 0.0;
@@ -39,7 +34,7 @@ public class OI {
 		m_arm = Arm.getInstance();
 		m_elevator = Elevator.getInstance();
 
-		m_timer = new Timer();
+		m_pdp = new PowerDistributionPanel();
 	}
 
 	public static OI getInstance() {
@@ -88,12 +83,12 @@ public class OI {
 
 	public double getOperatorTwist() {
 		double tval = m_operatorStick.getTwist();
-		if (tval > -Constants.JOYSTICK_DEADBAND
-				&& tval < Constants.JOYSTICK_DEADBAND) {
+		if (tval > -0.2
+				&& tval < 0.2) {
 			return 0.0;
 		} else {
-			if (Math.abs(tval) > 0.66) {
-				tval = (tval / (Math.abs(tval))) * 0.66;
+			if (Math.abs(tval) > Constants.ROTATION_SPEED_LIMIT) {
+				tval = (tval / (Math.abs(tval))) * Constants.ROTATION_SPEED_LIMIT;
 			}
 			return -tval;
 		}
@@ -115,6 +110,10 @@ public class OI {
 		SmartDashboard.putNumber("Rotary", m_arm.getRotaryPot());
 		SmartDashboard.putNumber("String", m_elevator.getPotValue());
 		SmartDashboard.putNumber("Claw Current", m_arm.getClawCurrent());
+		SmartDashboard.putNumber("Left Drive Current: ", m_pdp.getCurrent(Constants.LEFT_DRIVES));
+		SmartDashboard.putNumber("Right Drive Current: ", m_pdp.getCurrent(Constants.RIGHT_DRIVES));
+		SmartDashboard.putNumber("Operator Twist: ", getOperatorTwist());
+		SmartDashboard.putNumber("Operator POV: ", m_operatorStick.getPOV());
 		
 		// Drivebase controls
 		m_drivebase.setSpeed(getLeftY(), getRightY());
@@ -211,6 +210,10 @@ public class OI {
 			} else {
 				m_autoArmSequence = false;
 			}
+		} else if(getOperatorButton(5)) {
+			m_autoArmSequence = true;
+			m_autoTValue = m_arm.getRotaryPot();
+			m_autoYValue = 0.4125;
 		}
 
 		if (Math.abs(getOperatorTwist()) >= 0.25
