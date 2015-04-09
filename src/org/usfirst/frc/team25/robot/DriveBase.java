@@ -1,9 +1,8 @@
 package org.usfirst.frc.team25.robot;
 
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Timer;
 
 public class DriveBase {
 
@@ -18,6 +17,9 @@ public class DriveBase {
 	private final Encoder m_leftEncoder;
 	private final Encoder m_rightEncoder;
 
+	private double m_driveStep = 0;
+	private final Timer m_timer;
+	
 	public DriveBase() {
 		m_leftDrive1 = new Talon(Constants.LEFT_DRIVE_PWM1);
 		m_leftDrive2 = new Talon(Constants.LEFT_DRIVE_PWM2);
@@ -32,6 +34,8 @@ public class DriveBase {
 		
 		m_leftEncoder.setDistancePerPulse(Constants.INCHES_PER_COUNT);
 		m_rightEncoder.setDistancePerPulse(Constants.INCHES_PER_COUNT);
+		
+		m_timer = new Timer();
 	}
 
 	public static DriveBase getInstance() {
@@ -69,6 +73,32 @@ public class DriveBase {
 		return m_rightEncoder.getDistance();
 	}
 
+	public boolean goTo(double goal, double speed) {
+		double distance = getLeftEncoderDistance();
+		speed = -Math.abs(speed) * (goal / (Math.abs(goal)));
+		if(m_driveStep == 0) {
+			resetEncoders();
+			m_driveStep++;
+		} else if(m_driveStep == 1) {
+			if(distance < goal) {
+				setSpeed(speed);
+			} else {
+				m_timer.start();
+				m_timer.reset();
+				m_driveStep++;
+			}
+		} else if(m_driveStep == 2) {
+			setSpeed((goal / Math.abs(goal)) * 0.1);
+			if(m_timer.get() > 0.35) {
+				setSpeed(0.0);
+				m_timer.stop();
+				m_driveStep = 0;
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	public void resetEncoders() {
 		m_leftEncoder.reset();
 		m_rightEncoder.reset();

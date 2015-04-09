@@ -35,7 +35,37 @@ public class AutonController {
 	/**
 	 * Drives forward the length from one bin on the step to another.
 	 */
-
+	
+	public void test() {
+		if(m_step == 0) {
+			m_timer.start();
+			m_timer.reset();
+			m_step++;
+		} else if(m_step == 1) {
+			if(!m_arm.openClaw(m_timer.get())) {
+				m_timer.stop();
+				m_arm.setClawSpeed(0.0);;
+				m_step++;
+			}
+		} else if(m_step == 2) {
+			if(!m_drivebase.goTo(5.0, 0.3)) {
+				m_drivebase.setSpeed(0.0);
+				m_timer.start();
+				m_timer.reset();
+				m_step++;
+			}
+		} else if(m_step == 3) {
+			if(!m_arm.closeClaw(m_timer.get())) {
+				m_timer.stop();
+				m_arm.setClawSpeed(0.0);
+				m_step++;
+			}
+		} else {
+			m_drivebase.setSpeed(0.0);
+			m_arm.setClawSpeed(0.0);
+		}
+	}
+	
 	public void driveToNextContainer() {
 
 		double distance = m_drivebase.getLeftEncoderDistance();
@@ -224,7 +254,7 @@ public class AutonController {
 				m_step++;
 			}
 		} else if(m_step == 9) {  //drive forward into the auto zone
-			if (distance < 75) {
+			if (distance < 72) {
 				m_drivebase.setSpeed(-0.4);
 			} else {
 				m_timer.start();
@@ -586,7 +616,7 @@ public class AutonController {
 	/**
 	 * Moves the containers from the home zone to the auto zone.
 	 */
-	public void moveContainersToAutoZone() {
+	/*public void moveContainersToAutoZone() {
 		double distance = m_drivebase.getLeftEncoderDistance();
 		System.out.println(distance);
 
@@ -694,7 +724,7 @@ public class AutonController {
 			m_arm.setRotationSpeed(0.0);
 			m_arm.setYSpeed(0.0);
 		}
-	}
+	} */
 
 	/**
 	 * Grab one container from the step and drive to the auto zone.

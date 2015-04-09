@@ -39,13 +39,14 @@ public class Arm {
 		return m_pdPanel.getCurrent(Constants.PD_CLAW);
 	}
 
-	public boolean openClaw() {
-		if (getClawCurrent() > 50.0) {
+	public boolean openClaw(double time) {
+		if(time < 1.1) {
+			setClawSpeed(Constants.CLAW_OPEN);
+			return true;
+		} else {
 			setClawSpeed(0.0);
 			return false;
 		}
-		setClawSpeed(1.0);
-		return true;
 	}
 
 	/**
@@ -62,13 +63,14 @@ public class Arm {
 		return true;
 	}
 
-	public boolean closeClaw() {
-		if (getClawCurrent() > 50.0) {
+	public boolean closeClaw(double time) {
+		if(time < 1.1) {
+			setClawSpeed(Constants.CLAW_CLOSE);
+			return true;
+		} else {
 			setClawSpeed(0.0);
 			return false;
 		}
-		setClawSpeed(-1.0);
-		return true;
 	}
 
 	public void setClawSpeed(double speed) {

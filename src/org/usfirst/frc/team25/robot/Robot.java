@@ -41,6 +41,7 @@ public class Robot extends IterativeRobot {
     	m_autonChooser.addObject("Pick up can (To noodle height)", 9);
     	m_autonChooser.addObject("Get ready with can for teleop", 10);
     	m_autonChooser.addObject("Step set up", 11);
+    	m_autonChooser.addObject("test", 12);
     	SmartDashboard.putData("Choose Auton mode: ", m_autonChooser);
     }
     
@@ -90,6 +91,8 @@ public class Robot extends IterativeRobot {
     		m_autonController.getOneCanReady();
     	} else if(m_autonPicked == 11) {
     		m_autonController.dropArm();
+    	} else if(m_autonPicked == 12) {
+    		m_autonController.test();
     	}
     }
 

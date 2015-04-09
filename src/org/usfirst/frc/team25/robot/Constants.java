@@ -2,7 +2,8 @@ package org.usfirst.frc.team25.robot;
 
 public class Constants {
 
-		final static double ROTATION_SPEED_LIMIT = 0.5;
+		final static double ARM_FAST = 0.8;
+		final static double ARM_SLOW = 0.66;
 		final static double ELEVATOR_SLOW_RATIO = 2.0;
 		
 		final static double LEFT_LIMIT = 0.51;

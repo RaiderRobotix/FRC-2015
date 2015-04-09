@@ -87,8 +87,12 @@ public class OI {
 				&& tval < 0.2) {
 			return 0.0;
 		} else {
-			if (Math.abs(tval) > Constants.ROTATION_SPEED_LIMIT) {
-				tval = (tval / (Math.abs(tval))) * Constants.ROTATION_SPEED_LIMIT;
+			double rotationLimit = Constants.ARM_SLOW;
+			if(getOperatorButton(11)) {
+				rotationLimit = Constants.ARM_FAST;
+			}
+			if (Math.abs(tval) > rotationLimit) {
+				tval = (tval / (Math.abs(tval))) * rotationLimit;
 			}
 			return -tval;
 		}
@@ -201,15 +205,6 @@ public class OI {
 			m_autoArmSequence = true;
 			m_autoTValue = Constants.ARM_FORWARDS;
 			m_autoYValue = m_arm.getDartPot();
-		} else if (getOperatorButton(11)) {
-			if (m_arm.getRotaryPot() >= Constants.LEFT_LIMIT
-					&& m_arm.getDartPot() < Constants.DART_EXTENDED + 0.005) {
-				m_autoArmSequence = true;
-				m_autoTValue = m_arm.getRotaryPot();
-				m_autoYValue = Constants.DART_EXTENDED;
-			} else {
-				m_autoArmSequence = false;
-			}
 		} else if(getOperatorButton(5)) {
 			m_autoArmSequence = true;
 			m_autoTValue = m_arm.getRotaryPot();
