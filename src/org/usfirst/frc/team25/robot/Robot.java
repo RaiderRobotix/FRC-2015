@@ -38,6 +38,9 @@ public class Robot extends IterativeRobot {
     	m_autonChooser.addObject("Arm bring one can to auto zone", 6);
     	m_autonChooser.addObject("Grab from step (left)", 7);
     	m_autonChooser.addObject("Grab from step (right)", 8);
+    	m_autonChooser.addObject("Pick up can (To noodle height)", 9);
+    	m_autonChooser.addObject("Get ready with can for teleop", 10);
+    	m_autonChooser.addObject("Step set up", 11);
     	SmartDashboard.putData("Choose Auton mode: ", m_autonChooser);
     }
     
@@ -81,6 +84,12 @@ public class Robot extends IterativeRobot {
     		m_autonController.getCanFromStep(true);  //left
     	} else if(m_autonPicked == 8) {
     		m_autonController.getCanFromStep(false);  //right
+    	} else if(m_autonPicked == 9) {
+    		m_autonController.pickUpCan();
+    	} else if(m_autonPicked == 10) {
+    		m_autonController.getOneCanReady();
+    	} else if(m_autonPicked == 11) {
+    		m_autonController.dropArm();
     	}
     }
 

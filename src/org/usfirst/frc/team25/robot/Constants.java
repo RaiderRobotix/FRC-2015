@@ -3,7 +3,8 @@ package org.usfirst.frc.team25.robot;
 public class Constants {
 
 		final static double ROTATION_SPEED_LIMIT = 0.5;
-	
+		final static double ELEVATOR_SLOW_RATIO = 2.0;
+		
 		final static double LEFT_LIMIT = 0.51;
 		final static double RIGHT_LIMIT = 0.385;
 		final static double ARM_FORWARDS = 0.4455;
@@ -13,8 +14,12 @@ public class Constants {
 		final static int DART_POT = 2;
 		
 		//Dart Limits
-		final static double DART_RETRACTED = 0.967;  //Old- 0.983
+		final static double DART_RETRACTED = 0.955;
 		final static double DART_EXTENDED = 0.1515;
+		
+		//Dart presets
+		final static double NOODLE_HEIGHT = 0.4125;
+		final static double HAIR_OFF_GROUND = 0.944;
 		
 		// Left Drive PWM Constants
 		final static int LEFT_DRIVE_PWM1 = 2;
@@ -24,7 +29,7 @@ public class Constants {
 		final static int RIGHT_DRIVE_PWM1 = 0;
 		final static int RIGHT_DRIVE_PWM2 = 1;
 
-		// Elevator PWM Contstants
+		// Elevator PWM Constants
 		final static int LEFT_ELEVATOR_PWM = 4;
 		final static int RIGHT_ELEVATOR_PWM = 5;
 		final static int STRING_POT_PWM = 0;

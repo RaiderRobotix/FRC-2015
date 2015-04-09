@@ -94,8 +94,8 @@ public class Elevator {
 			return false;
 		} else if (!potValueWithinRange(value)) {
 			if (potValueWithinCustomRange(value, 0.075)) {
-				m_elevatorUp = Constants.ELEVATOR_UP / 4.0;
-				m_elevatorDown = Constants.ELEVATOR_DOWN / 4.0;
+				m_elevatorUp = Constants.ELEVATOR_UP / Constants.ELEVATOR_SLOW_RATIO;
+				m_elevatorDown = Constants.ELEVATOR_DOWN / Constants.ELEVATOR_SLOW_RATIO;
 			}
 
 			if (getPotValue() < value) {

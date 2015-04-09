@@ -178,10 +178,10 @@ public class OI {
 
 			if (m_elevator.potValueWithinCustomRange(
 					Constants.ELEVATOR_LOWER_LIMIT, 0.05) && getRightButton(2)) {
-				m_elevatorSpeed /= 4.0;
+				m_elevatorSpeed /= Constants.ELEVATOR_SLOW_RATIO;
 			} else if (m_elevator.potValueWithinCustomRange(
 					Constants.ELEVATOR_UPPER_LIMIT, 0.05) && getRightButton(3)) {
-				m_elevatorSpeed /= 4.0;
+				m_elevatorSpeed /= Constants.ELEVATOR_SLOW_RATIO;
 			}
 
 			m_elevator.setSpeed(m_elevatorSpeed); // end manual controls
@@ -213,7 +213,7 @@ public class OI {
 		} else if(getOperatorButton(5)) {
 			m_autoArmSequence = true;
 			m_autoTValue = m_arm.getRotaryPot();
-			m_autoYValue = 0.4125;
+			m_autoYValue = Constants.NOODLE_HEIGHT;
 		}
 
 		if (Math.abs(getOperatorTwist()) >= 0.25

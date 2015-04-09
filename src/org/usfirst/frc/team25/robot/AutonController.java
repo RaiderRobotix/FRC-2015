@@ -115,6 +115,39 @@ public class AutonController {
 		}
 	}
 
+	public void dropArm() {
+		if(m_step == 0) {
+			m_step++;
+		} else if(m_step == 1) {
+			if(!m_arm.goTo(Constants.ARM_FORWARDS, m_arm.getDartPot(), 0.5, 0.0)) {
+				m_arm.setYSpeed(0.0);
+				m_arm.setRotationSpeed(0.0);
+				m_timer.start();
+				m_timer.reset();
+				m_step++;
+			}
+		} else if(m_step == 2) {
+			if(m_timer.get() < 1.1) {
+				m_arm.setClawSpeed(Constants.CLAW_OPEN);
+			} else {
+				m_timer.stop();
+				m_arm.setClawSpeed(0.0);
+				m_step++;
+			}
+		} else if(m_step == 3) {
+			if(!m_arm.goTo(m_arm.getRotaryPot(), 0.6475, 0.0, 0.8)) {
+				m_arm.setYSpeed(0.0);
+				m_arm.setRotationSpeed(0.0);
+				m_step++;
+			}
+		} else {
+			m_arm.setRotationSpeed(0.0);
+			m_arm.setYSpeed(0.0);
+			m_arm.setClawSpeed(0.0);
+			m_drivebase.setSpeed(0.0);
+		}
+	}
+	
 	public void armGrabOneCan() {
 		double distance = m_drivebase.getLeftEncoderDistance();
 		System.out.println(m_step);
@@ -141,16 +174,20 @@ public class AutonController {
 			if (distance < 36) {
 				m_drivebase.setSpeed(-0.3);
 			} else {
+				m_timer.start();
+				m_timer.reset();
 				m_step++;
 			}
-		} else if (m_step == 3) {  //drive back a little
-			if (distance >= 36 && distance <= 41) {
+		} else if (m_step == 3) {  //drive back a little  by timer
+			if(m_timer.get() < 0.25) {
 				m_drivebase.setSpeed(0.1);
 			} else {
+				m_timer.stop();
+				m_drivebase.setSpeed(0.0);
 				m_step++;
 			}
 		} else if (m_step == 4) {  //bring arm forwards and down
-			if (!m_arm.goTo(Constants.ARM_FORWARDS, 0.965, 0.66, 0.5)) {
+			if (!m_arm.goTo(Constants.ARM_FORWARDS, Constants.DART_RETRACTED, 0.66, 0.8)) {
 				m_arm.setRotationSpeed(0.0);
 				m_arm.setYSpeed(0.0);
 				m_drivebase.resetEncoders();
@@ -181,8 +218,8 @@ public class AutonController {
 				m_step++;
 			}
 		} else if(m_step == 8) {  //bring arm up a little
-			if(!m_arm.goTo(m_arm.getRotaryPot(), 0.944, 0.0, 1.0)) {
-				m_arm.setYSpeed(0.0);
+			if(!m_arm.goTo(m_arm.getRotaryPot(), Constants.DART_RETRACTED, 0.0, 1.0)) {
+				m_arm.goTo(m_arm.getRotaryPot(), Constants.DART_EXTENDED, 0.0, 0.3);
 				m_drivebase.resetEncoders();
 				m_step++;
 			}
@@ -203,7 +240,7 @@ public class AutonController {
 				m_step++;
 			}
 		} else if(m_step == 11) {
-			if(!m_arm.goTo(m_arm.getRotaryPot(), Constants.DART_EXTENDED, 0.0, 0.5)) {
+			if(!m_arm.goTo(Constants.LEFT_LIMIT, Constants.DART_EXTENDED, 0.3, 0.85)) {
 				m_arm.setYSpeed(0.0);
 				m_arm.setRotationSpeed(0.0);
 				m_step++;
@@ -220,6 +257,175 @@ public class AutonController {
 				m_arm.setRotationSpeed(0.0);
 				m_step++;
 			}*/
+		} else {  //set everything to zero
+			m_drivebase.setSpeed(0.0);
+			m_arm.setYSpeed(0.0);
+			m_arm.setClawSpeed(0.0);
+			m_arm.setRotationSpeed(0.0);
+		}
+	}
+	
+	public void getOneCanReady() {  //to noodle height
+		double distance = m_drivebase.getLeftEncoderDistance();
+		System.out.println(m_step);
+
+		if (m_step == 0) {  //start
+			m_drivebase.resetEncoders();
+			m_timer.start();
+			m_timer.reset();
+			m_step++;
+		} else if (m_step == 1) {  //drive forward
+			if (distance < 36) {
+				m_drivebase.setSpeed(-0.3);
+			} else {
+				m_drivebase.setSpeed(0.1);
+			}
+			if (m_timer.get() < 1.0) {
+				m_arm.setClawSpeed(Constants.CLAW_OPEN);  //and open claw
+			} else {
+				m_arm.setClawSpeed(0.0);
+				m_timer.stop();
+				m_step++;
+			}
+		} else if (m_step == 2) {  //finish driving forward
+			if (distance < 36) {
+				m_drivebase.setSpeed(-0.3);
+			} else {
+				m_timer.start();
+				m_timer.reset();
+				m_step++;
+			}
+		} else if (m_step == 3) {  //drive back a little
+			if(m_timer.get() < 0.25) {
+				m_drivebase.setSpeed(0.1);
+			} else {
+				m_timer.stop();
+				m_drivebase.setSpeed(0.0);
+				m_step++;
+			}
+		} else if (m_step == 4) {  //bring arm forwards and down
+			if (!m_arm.goTo(Constants.ARM_FORWARDS, Constants.DART_RETRACTED, 0.66, 0.75)) {
+				m_arm.setRotationSpeed(0.0);
+				m_arm.setYSpeed(0.0);
+				m_drivebase.resetEncoders();
+				m_step++;
+			}
+		} else if(m_step == 5) {  //move back (into the can)
+			if (distance > -36) {
+				m_drivebase.setSpeed(0.3);
+			} else {
+				m_timer.start();
+				m_timer.reset();
+				m_step++;
+			}
+		} else if(m_step == 6) {
+			if (m_timer.get() < 0.25) {  //move forward a little (to stop TIMER)
+				m_drivebase.setSpeed(-0.1);
+			} else {
+				m_drivebase.setSpeed(0.0);
+				m_timer.stop();
+				m_step++;
+			}
+		} else {  //set everything to zero
+			m_drivebase.setSpeed(0.0);
+			m_arm.setYSpeed(0.0);
+			m_arm.setClawSpeed(0.0);
+			m_arm.setRotationSpeed(0.0);
+		}
+	}
+	
+	public void pickUpCan() {  //to noodle height
+		double distance = m_drivebase.getLeftEncoderDistance();
+		System.out.println(m_step);
+
+		if (m_step == 0) {  //start
+			m_drivebase.resetEncoders();
+			m_timer.start();
+			m_timer.reset();
+			m_step++;
+		} else if (m_step == 1) {  //drive forward
+			if (distance < 36) {
+				m_drivebase.setSpeed(-0.3);
+			} else {
+				m_drivebase.setSpeed(0.1);
+			}
+			if (m_timer.get() < 1.0) {
+				m_arm.setClawSpeed(Constants.CLAW_OPEN);  //and open claw
+			} else {
+				m_arm.setClawSpeed(0.0);
+				m_timer.stop();
+				m_step++;
+			}
+		} else if (m_step == 2) {  //finish driving forward
+			if (distance < 36) {
+				m_drivebase.setSpeed(-0.3);
+			} else {
+				m_timer.start();
+				m_timer.reset();
+				m_step++;
+			}
+		} else if (m_step == 3) {  //drive back a little
+			if(m_timer.get() < 0.25) {
+				m_drivebase.setSpeed(0.1);
+			} else {
+				m_timer.stop();
+				m_drivebase.setSpeed(0.0);
+				m_step++;
+			}
+		} else if (m_step == 4) {  //bring arm forwards and down
+			if (!m_arm.goTo(Constants.ARM_FORWARDS, Constants.DART_RETRACTED, 0.66, 0.75)) {
+				m_arm.setRotationSpeed(0.0);
+				m_arm.setYSpeed(0.0);
+				m_drivebase.resetEncoders();
+				m_step++;
+			}
+		} else if(m_step == 5) {  //move back (into the can)
+			if (distance > -36) {
+				m_drivebase.setSpeed(0.3);
+			} else {
+				m_timer.start();
+				m_timer.reset();
+				m_step++;
+			}
+		} else if(m_step == 6) {
+			if (m_timer.get() < 0.3) {  //move forward a little (to stop TIMER)
+				m_drivebase.setSpeed(-0.1);
+			} else {
+				m_drivebase.setSpeed(0.0);
+				m_timer.reset();
+				m_step++;
+			}
+		} else if(m_step == 7) {  //close claw
+			if(m_timer.get() < 1.1) {
+				m_arm.setClawSpeed(Constants.CLAW_CLOSE);
+			} else {
+				m_arm.setClawSpeed(0.0);
+				m_timer.stop();
+				m_drivebase.resetEncoders();
+				m_step++;
+			}
+		} else if(m_step == 8) {
+			if(distance < 12) {
+				m_drivebase.setSpeed(-0.3);
+			} else {
+				m_timer.start();
+				m_timer.reset();
+				m_step++;
+			}
+		} else if(m_step == 9) {
+			if(m_timer.get() < 0.25) {
+				m_drivebase.setSpeed(0.1);
+			} else {
+				m_timer.stop();
+				m_drivebase.setSpeed(0.0);
+				m_step++;
+			}
+		} else if(m_step == 10) {  //bring dart up
+			if(!m_arm.goTo(m_arm.getRotaryPot(), Constants.NOODLE_HEIGHT, 0.0, 0.75)) {
+				m_arm.setYSpeed(0.0);
+				m_arm.setRotationSpeed(0.0);
+				m_step++;
+			}
 		} else {  //set everything to zero
 			m_drivebase.setSpeed(0.0);
 			m_arm.setYSpeed(0.0);
