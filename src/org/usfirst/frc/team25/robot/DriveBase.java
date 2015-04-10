@@ -73,14 +73,15 @@ public class DriveBase {
 		return m_rightEncoder.getDistance();
 	}
 
-	public boolean goTo(double goal, double speed) {
+	public boolean goBackwards(double goal, double speed) {
+		goal = -Math.abs(goal);
 		double distance = getLeftEncoderDistance();
-		speed = -Math.abs(speed) * (goal / (Math.abs(goal)));
+		speed = Math.abs(speed);
 		if(m_driveStep == 0) {
 			resetEncoders();
 			m_driveStep++;
 		} else if(m_driveStep == 1) {
-			if(distance < goal) {
+			if((distance > goal)) {
 				setSpeed(speed);
 			} else {
 				m_timer.start();
@@ -88,7 +89,33 @@ public class DriveBase {
 				m_driveStep++;
 			}
 		} else if(m_driveStep == 2) {
-			setSpeed((goal / Math.abs(goal)) * 0.1);
+			setSpeed(-0.1);
+			if(m_timer.get() > 0.35) {
+				setSpeed(0.0);
+				m_timer.stop();
+				m_driveStep = 0;
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean goForwards(double goal, double speed) {
+		double distance = getLeftEncoderDistance();
+		speed = -Math.abs(speed);
+		if(m_driveStep == 0) {
+			resetEncoders();
+			m_driveStep++;
+		} else if(m_driveStep == 1) {
+			if((distance < goal)) {
+				setSpeed(speed);
+			} else {
+				m_timer.start();
+				m_timer.reset();
+				m_driveStep++;
+			}
+		} else if(m_driveStep == 2) {
+			setSpeed(0.1);
 			if(m_timer.get() > 0.35) {
 				setSpeed(0.0);
 				m_timer.stop();

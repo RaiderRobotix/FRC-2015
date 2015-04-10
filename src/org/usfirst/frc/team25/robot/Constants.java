@@ -15,7 +15,7 @@ public class Constants {
 		final static int DART_POT = 2;
 		
 		//Dart Limits
-		final static double DART_RETRACTED = 0.955;
+		final static double DART_RETRACTED = 0.915;//0.955;
 		final static double DART_EXTENDED = 0.1515;
 		
 		//Dart presets

@@ -83,15 +83,14 @@ public class OI {
 
 	public double getOperatorTwist() {
 		double tval = m_operatorStick.getTwist();
-		if (tval > -0.2
-				&& tval < 0.2) {
+		if (tval > -0.25
+				&& tval < 0.25) {
 			return 0.0;
 		} else {
 			double rotationLimit = Constants.ARM_SLOW;
 			if(getOperatorButton(11)) {
 				rotationLimit = Constants.ARM_FAST;
-			}
-			if (Math.abs(tval) > rotationLimit) {
+			} else if (Math.abs(tval) > rotationLimit) {
 				tval = (tval / (Math.abs(tval))) * rotationLimit;
 			}
 			return -tval;
