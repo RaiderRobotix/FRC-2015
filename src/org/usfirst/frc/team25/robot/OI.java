@@ -17,7 +17,7 @@ public class OI {
 	private final DriveBase m_drivebase;
 	private final Arm m_arm;
 	private final Elevator m_elevator;
-
+	
 	private double goalPotValue;
 	private boolean m_autoSequenceRunning = false;
 	private double m_elevatorSpeed = 0.0;
@@ -33,7 +33,7 @@ public class OI {
 		m_drivebase = DriveBase.getInstance();
 		m_arm = Arm.getInstance();
 		m_elevator = Elevator.getInstance();
-
+		
 		m_pdp = new PowerDistributionPanel();
 	}
 

@@ -9,7 +9,7 @@ public class AutonController {
 	private final DriveBase m_drivebase;
 	private final Arm m_arm;
 	private final Elevator m_elevator;
-
+	
 	private int m_step;
 	private final Timer m_timer;
 
@@ -783,6 +783,57 @@ public class AutonController {
 	 * RIGHT: 0.4765 //Dart: .72 } }
 	 */
 
+	public void rightSideCanStage() {
+		if(m_step == 0) {
+			m_step++;
+		} else if(m_step == 1) {
+			if(!m_arm.goTo(0.4765, m_arm.getDartPot(), 0.8, 0.0)) {
+				m_arm.setRotationSpeed(0.0);
+				m_arm.setYSpeed(0.0);
+				m_timer.start();
+				m_timer.reset();
+				m_step++;
+			}
+		} else if(m_step == 2) {
+			if(!m_arm.openClaw(m_timer.get())) {
+				m_timer.stop();
+				m_arm.setClawSpeed(0.0);
+				m_step++;
+			}
+		} else if(m_step == 3) {
+			if(!m_arm.goTo(m_arm.getRotaryPot(), Constants.DART_RETRACTED, 0.0, 0.66)) {
+				m_arm.setRotationSpeed(0.0);
+				m_arm.setYSpeed(0.0);
+				m_drivebase.resetEncoders();
+				m_step++;
+			}
+		} else if(m_step == 4) {
+			if(!m_drivebase.goBackwards(18.0, 0.3)) {
+				m_drivebase.setSpeed(0.0);
+				m_timer.start();
+				m_timer.reset();
+				m_step++;
+			}
+		} else if(m_step == 5) {
+			if(!m_arm.closeClaw(m_timer.get())) {
+				m_arm.setClawSpeed(0.0);
+				m_timer.stop();
+				m_step++;
+			}
+		} else if(m_step == 6) {
+			if(!m_arm.goTo(m_arm.getRotaryPot(), Constants.NOODLE_HEIGHT, 0.0, 0.6)) {
+				m_arm.setYSpeed(0.0);
+				m_step++;
+			}
+		} else {
+			m_arm.setClawSpeed(0.0);
+			m_arm.setYSpeed(0.0);
+			m_arm.setRotationSpeed(0.0);
+			m_drivebase.setSpeed(0.0);
+			m_elevator.setSpeed(0.0);
+		}
+	}
+	
 	public void getCanFromStep(boolean left) {
 		double distance = m_drivebase.getLeftEncoderDistance();
 

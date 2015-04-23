@@ -41,6 +41,7 @@ public class Robot extends IterativeRobot {
     	m_autonChooser.addObject("Step set up", 11);
     	m_autonChooser.addObject("test", 12);
     	m_autonChooser.addObject("Pick from step", 13);
+    	m_autonChooser.addObject("Right Side Can Setup", 14);
     	SmartDashboard.putData("Choose Auton mode: ", m_autonChooser);
     }
     
@@ -94,6 +95,8 @@ public class Robot extends IterativeRobot {
     		m_autonController.test();
     	} else if(m_autonPicked == 13) {
     		m_autonController.newPickUpFromStep();
+    	} else if(m_autonPicked == 14) {
+    		m_autonController.rightSideCanStage();
     	}
     }
 
