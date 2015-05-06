@@ -14,13 +14,15 @@ public class Constants {
 		final static int ROTARY_POT = 1;
 		final static int DART_POT = 2;
 		
+		final static double TINY_TIME = 0.15;
+		
 		//Dart Limits
-		final static double DART_RETRACTED = 0.915;//0.955;
-		final static double DART_EXTENDED = 0.1515;
+		final static double DART_RETRACTED = 0.8995;//0.915;//0.955;
+		final static double DART_EXTENDED = 0.1145;//0.1515;
 		
 		//Dart presets
-		final static double NOODLE_HEIGHT = 0.4125;
-		final static double HAIR_OFF_GROUND = 0.944;
+		final static double NOODLE_HEIGHT = 0.4335;
+		final static double HAIR_OFF_GROUND = 0.875;
 		
 		// Left Drive PWM Constants
 		final static int LEFT_DRIVE_PWM1 = 2;

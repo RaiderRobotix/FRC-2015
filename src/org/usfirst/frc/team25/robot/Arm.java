@@ -16,7 +16,9 @@ public class Arm {
 	private final Talon m_armYAxis;
 
 	private final PowerDistributionPanel m_pdPanel;
-
+	//private int m_clawTinyStep = 0;
+	//private Timer m_timer;
+	
 	public Arm() {
 		m_claw = new Talon(Constants.ARM_CLAW_PWM);
 		m_rotation = new Talon(Constants.ARM_ROTATION_PWM);
@@ -26,6 +28,7 @@ public class Arm {
 		m_dartPot = new AnalogPotentiometer(Constants.DART_POT);
 
 		m_pdPanel = new PowerDistributionPanel();
+		//m_timer = new Timer();
 	}
 
 	public static Arm getInstance() {
@@ -38,7 +41,41 @@ public class Arm {
 	public double getCurrent() {
 		return m_pdPanel.getCurrent(Constants.PD_CLAW);
 	}
-
+/*
+	public boolean tinyOpenClaw() {
+		if(m_clawTinyStep == 0) {
+			m_timer.start();
+			m_timer.reset();
+			setClawSpeed(Constants.CLAW_OPEN);
+			m_clawTinyStep++;
+		} else if(m_clawTinyStep == 1) {
+			if(m_timer.get() > Constants.TINY_TIME) {
+				setClawSpeed(0.0);
+				m_timer.stop();
+				m_clawTinyStep = 0;
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean tinyCloseClaw() {
+		if(m_clawTinyStep == 0) {
+			m_timer.start();
+			m_timer.reset();
+			setClawSpeed(Constants.CLAW_CLOSE);
+			m_clawTinyStep++;
+		} else if(m_clawTinyStep == 1) {
+			if(m_timer.get() > Constants.TINY_TIME) {
+				setClawSpeed(0.0);
+				m_timer.stop();
+				m_clawTinyStep = 0;
+				return false;
+			}
+		}
+		return true;
+	} */
+	
 	public boolean openClaw(double time) {
 		if(time < 1.1) {
 			setClawSpeed(Constants.CLAW_OPEN);

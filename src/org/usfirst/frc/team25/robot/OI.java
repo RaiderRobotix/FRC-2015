@@ -11,19 +11,21 @@ public class OI {
 	private final Joystick m_leftStick;
 	private final Joystick m_rightStick;
 	private final Joystick m_operatorStick; // TODO add operator controls
-	
+
 	private final PowerDistributionPanel m_pdp;
-	
+
 	private final DriveBase m_drivebase;
 	private final Arm m_arm;
 	private final Elevator m_elevator;
-	
+
 	private double goalPotValue;
 	private boolean m_autoSequenceRunning = false;
 	private double m_elevatorSpeed = 0.0;
 	private boolean m_autoArmSequence = false;
 	private double m_autoYValue = 0.0;
 	private double m_autoTValue = 0.0;
+	private boolean m_tinyArmAuto = false;
+	private boolean m_clawClose = false;
 
 	public OI() {
 		m_leftStick = new Joystick(Constants.LEFT_JOYSTICK_PORT);
@@ -33,7 +35,7 @@ public class OI {
 		m_drivebase = DriveBase.getInstance();
 		m_arm = Arm.getInstance();
 		m_elevator = Elevator.getInstance();
-		
+
 		m_pdp = new PowerDistributionPanel();
 	}
 
@@ -83,12 +85,11 @@ public class OI {
 
 	public double getOperatorTwist() {
 		double tval = m_operatorStick.getTwist();
-		if (tval > -0.25
-				&& tval < 0.25) {
+		if (tval > -0.25 && tval < 0.25) {
 			return 0.0;
 		} else {
 			double rotationLimit = Constants.ARM_SLOW;
-			if(getOperatorButton(11)) {
+			if (getOperatorButton(11)) {
 				rotationLimit = Constants.ARM_FAST;
 			} else if (Math.abs(tval) > rotationLimit) {
 				tval = (tval / (Math.abs(tval))) * rotationLimit;
@@ -104,20 +105,21 @@ public class OI {
 	}
 
 	public void enableTeleopControls() {
-		//System.out.println("Dart: " + m_arm.getDartPot());
-		//System.out.println("Rotary: " + m_arm.getRotaryPot());
+		// System.out.println("Dart: " + m_arm.getDartPot());
+		// System.out.println("Rotary: " + m_arm.getRotaryPot());
 		// System.out.println("current" + m_arm.getClawCurrent());
 
-		
 		SmartDashboard.putNumber("Dart", m_arm.getDartPot());
 		SmartDashboard.putNumber("Rotary", m_arm.getRotaryPot());
 		SmartDashboard.putNumber("String", m_elevator.getPotValue());
 		SmartDashboard.putNumber("Claw Current", m_arm.getClawCurrent());
-		SmartDashboard.putNumber("Left Drive Current: ", m_pdp.getCurrent(Constants.LEFT_DRIVES));
-		SmartDashboard.putNumber("Right Drive Current: ", m_pdp.getCurrent(Constants.RIGHT_DRIVES));
+		SmartDashboard.putNumber("Left Drive Current: ",
+				m_pdp.getCurrent(Constants.LEFT_DRIVES));
+		SmartDashboard.putNumber("Right Drive Current: ",
+				m_pdp.getCurrent(Constants.RIGHT_DRIVES));
 		SmartDashboard.putNumber("Operator Twist: ", getOperatorTwist());
 		SmartDashboard.putNumber("Operator POV: ", m_operatorStick.getPOV());
-		
+
 		// Drivebase controls
 		m_drivebase.setSpeed(getLeftY(), getRightY());
 
@@ -139,13 +141,33 @@ public class OI {
 			goalPotValue = Constants.TOTE_SET_POSITION;
 		}
 
-		if (getOperatorTrigger() && !getOperatorButton(2)) {
-			m_arm.setClawSpeed(-1.0); // close
-		} else if (!getOperatorTrigger() && getOperatorButton(2)) {
-			m_arm.setClawSpeed(1.0); // open
-		} else {
-			m_arm.setClawSpeed(0.0);
-		} // */
+		/*if (m_operatorStick.getPOV() == 180 || m_operatorStick.getPOV() == 0) {
+			m_tinyArmAuto = true;
+			if (m_operatorStick.getPOV() == 180) {
+				m_clawClose = false;
+			} else {
+				m_clawClose = true;
+			}
+		} else if (getOperatorTrigger() || getOperatorButton(2)) {
+			m_tinyArmAuto = false;
+		}
+		if (m_tinyArmAuto) {
+			if(m_clawClose) {
+				m_tinyArmAuto = m_arm.tinyCloseClaw();
+			} else {
+				m_tinyArmAuto = m_arm.tinyOpenClaw();
+			}
+		} else { */
+			if (getOperatorTrigger() && !getOperatorButton(2)) {
+				m_arm.setClawSpeed(-1.0); // close
+			} else if (!getOperatorTrigger() && getOperatorButton(2)) {
+				m_arm.setClawSpeed(1.0); // open
+			} else {
+				m_arm.setClawSpeed(0.0);
+			}
+		//}
+
+		// */
 		/*
 		 * if(getOperatorTrigger()) { m_clawAuto = true; m_clawClosing = true; }
 		 * else if(getOperatorButton(2)) { m_clawAuto = true; m_clawClosing =
@@ -195,16 +217,16 @@ public class OI {
 		// ARM CONTROLS V V V
 		if (getOperatorButton(3)) {
 			m_autoArmSequence = true;
-			//runningArmNormalSeq = true;
-			//yComplete = false;
-			//timerGoing = false;
+			// runningArmNormalSeq = true;
+			// yComplete = false;
+			// timerGoing = false;
 			m_autoTValue = Constants.ARM_BACKWARDS;
 			m_autoYValue = Constants.DART_EXTENDED;
 		} else if (getOperatorButton(4)) {
 			m_autoArmSequence = true;
 			m_autoTValue = Constants.ARM_FORWARDS;
 			m_autoYValue = m_arm.getDartPot();
-		} else if(getOperatorButton(5)) {
+		} else if (getOperatorButton(5)) {
 			m_autoArmSequence = true;
 			m_autoTValue = m_arm.getRotaryPot();
 			m_autoYValue = Constants.NOODLE_HEIGHT;
@@ -215,12 +237,10 @@ public class OI {
 			m_autoArmSequence = false;
 		}
 
-		
 		if (getOperatorButton(12)) {
 			m_autoArmSequence = false;
 		}
-		
-		
+
 		if (!getOperatorButton(12)) {
 			if (m_autoArmSequence) {
 				m_autoArmSequence = m_arm.goTo(m_autoTValue, m_autoYValue,
@@ -300,7 +320,8 @@ public class OI {
 		} else {
 			m_arm.setRotationSpeed(getOperatorTwist());
 			double yspeed = getOperatorY() / getOperatorThrottle();
-			if(yspeed > 0.0 && m_arm.getDartPot() < Constants.DART_EXTENDED + 0.01) {
+			if (yspeed > 0.0
+					&& m_arm.getDartPot() < Constants.DART_EXTENDED + 0.01) {
 				yspeed = 0.0;
 			}
 			m_arm.setYSpeed(yspeed);
